@@ -116,7 +116,7 @@ body{margin:0;background:#FFF6E8;font-family:'Jua',sans-serif;color:#5B3A2A;user
   </div>
   <div class="panel" id="panel"></div>
   <svg class="hand" id="hand" viewBox="0 0 64 64"><path d="M22 6c4 0 6 3 6 6v18l3-1c3-1 6 1 6 1l4-1c3-1 6 1 6 2l3 0c3 0 5 2 5 5v10c0 9-7 16-16 16h-6c-6 0-10-3-13-8L9 37c-2-3 0-6 3-6 2 0 4 1 5 3l1 2V12c0-3 2-6 4-6z" fill="#FFE0C2" stroke="#5B3A2A" stroke-width="3" stroke-linejoin="round"/></svg>
-  <div class="note">꼬마사장 시제품 v0.4.1 · 위 칸은 손님, 아래 칸은 사장님(나)이 할 일</div>
+  <div class="note">꼬마사장 시제품 v0.4.2 · 위 칸은 손님, 아래 칸은 사장님(나)이 할 일</div>
 </div>
 <script>
 const LV={
@@ -133,11 +133,11 @@ const unit=n=>/쿠키|머핀|케이크|사탕/.test(n)?'개':'잔';
 let AC=null;
 function beep(ok){if(!S.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime;(ok?[880,1320]:[300,220]).forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;o.type=ok?'triangle':'sine';g.gain.setValueAtTime(.18,t+i*.12);g.gain.exponentialRampToValueAtTime(.001,t+i*.12+.25);o.connect(g);g.connect(AC.destination);o.start(t+i*.12);o.stop(t+i*.12+.3)})}catch(e){}}
 let VOICE=null,LAST=[],PEND=[];
-function pickVoice(){try{const vs=speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang));VOICE=vs.find(v=>/Google|Yuna|Sora|Heami|SunHi/i.test(v.name))||vs[0]||null}catch(e){}}
+let VOICE2=null;function pickVoice(){try{const vs=speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang));const nat=vs.filter(v=>/Natural|Online|Neural|Premium|Enhanced/i.test(v.name));VOICE=nat.find(v=>/SunHi|Yuna/i.test(v.name))||nat[0]||vs.find(v=>/Google|Yuna|Sora/i.test(v.name))||vs[0]||null;VOICE2=nat.find(v=>v!==VOICE)||VOICE}catch(e){}}
 if(window.speechSynthesis){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
-function talk(parts){LAST=parts;if(!S.sound||!window.speechSynthesis||!parts.length)return;try{const busy=speechSynthesis.speaking||speechSynthesis.pending;if(busy)speechSynthesis.cancel();speechSynthesis.resume&&speechSynthesis.resume();let i=0;const next=()=>{if(i>=parts.length)return;const [role,txt]=parts[i++];const u=new SpeechSynthesisUtterance(txt.replace(/,/g,'').replace(/·/g,' '));u.lang='ko-KR';if(VOICE)u.voice=VOICE;u.rate=role==='cust'?1.0:.92;u.pitch=role==='cust'?1.45:1.0;u.onend=next;u.onerror=next;speechSynthesis.speak(u)};busy?setTimeout(next,120):next()}catch(e){}}
+function talk(parts){LAST=parts;if(!S.sound||!window.speechSynthesis||!parts.length)return;try{const busy=speechSynthesis.speaking||speechSynthesis.pending;if(busy)speechSynthesis.cancel();speechSynthesis.resume&&speechSynthesis.resume();let i=0;const next=()=>{if(i>=parts.length)return;const [role,txt]=parts[i++];const u=new SpeechSynthesisUtterance(txt.replace(/,/g,'').replace(/·/g,' '));u.lang='ko-KR';const vv=role==='cust'?VOICE2:VOICE;if(vv)u.voice=vv;u.rate=role==='cust'?1.0:.92;u.pitch=role==='cust'?(VOICE2&&VOICE2!==VOICE?1.15:1.4):1.0;u.onend=next;u.onerror=next;speechSynthesis.speak(u)};busy?setTimeout(next,120):next()}catch(e){}}
 function unlockVoice(){try{if(!window.speechSynthesis)return;pickVoice();const u=new SpeechSynthesisUtterance(' ');u.lang='ko-KR';u.volume=0;speechSynthesis.speak(u)}catch(e){}}
-function voiceInfo(){if(!window.speechSynthesis)return '이 화면은 음성 기능을 지원하지 않아요';const vs=speechSynthesis.getVoices();const ko=vs.filter(v=>/^ko/i.test(v.lang));return `목소리 ${vs.length}개 · 한국어 ${ko.length}개${ko[0]?' ('+ko[0].name+')':''}`}
+function voiceInfo(){if(!window.speechSynthesis)return '이 화면은 음성 기능을 지원하지 않아요';const vs=speechSynthesis.getVoices();const ko=vs.filter(v=>/^ko/i.test(v.lang));return `한국어 목소리 ${ko.length}개 · 안내: ${VOICE?VOICE.name:'없음'} · 손님: ${VOICE2?VOICE2.name:'없음'}`}
 function custSay(txt,shake){const b=$('bubble');b.classList.remove('hide');b.innerHTML=`<small>${CUST[S.cust].name} 손님</small>${txt}`;if(shake){b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake')}PEND.push(['cust',txt])}
 let IDLE=null;
 function hideHand(){$('hand').style.display='none';clearTimeout(IDLE)}
