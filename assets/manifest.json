@@ -1,0 +1,14 @@
+{
+ "cust/bear": "assets/cust/bear.svg",
+ "cust/rabbit": "assets/cust/rabbit.svg",
+ "cust/squirrel": "assets/cust/squirrel.svg",
+ "item/아메리카노": "assets/item/americano.svg",
+ "item/라떼": "assets/item/latte.svg",
+ "item/우유": "assets/item/milk.svg",
+ "item/주스": "assets/item/juice.svg",
+ "item/쿠키": "assets/item/cookie.svg",
+ "item/사탕": "assets/item/candy.svg",
+ "item/머핀": "assets/item/muffin.svg",
+ "item/케이크": "assets/item/cake.svg",
+ "owner": "assets/owner.svg"
+}
