@@ -2,232 +2,301 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>꼬마사장 - 영업 화면 시제품</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>꼬마사장</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap">
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:#FFF6E8;font-family:'Jua',sans-serif;color:#5B3A2A;user-select:none}
-.wrap{max-width:780px;margin:0 auto;padding:10px}
-.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
-.pill{background:#fff;border-radius:999px;padding:8px 14px;font-size:18px}
-.pill b{color:#E0703A;font-weight:400}
-.top .sp{flex:1}
-.ibtn{border:0;background:#fff;border-radius:999px;padding:8px 14px;font:inherit;font-size:16px;color:#5B3A2A;cursor:pointer}
-.scene{position:relative;border-radius:22px 22px 0 0;overflow:hidden}
-.scene svg{display:block;width:100%;height:auto}
-.bubble{position:absolute;left:3%;top:4%;max-width:46%;background:#fff;border-radius:20px;padding:10px 16px;font-size:clamp(17px,3.4vw,24px);line-height:1.3;box-shadow:0 3px 0 #E8D2B8}
-.bubble small{display:block;font-size:14px;color:#B08A6E}
-.bubble.hide{display:none}
-.bubble.shake{animation:shake .4s}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
-#cust{transition:transform .7s cubic-bezier(.3,1.3,.5,1)}
-#fly g{transition:transform .9s ease-in-out}
-.panel{background:#fff;border-radius:0 0 22px 22px;padding:14px 16px 18px;min-height:240px;border-top:6px solid #6CA6D9}
-.who{display:inline-block;background:#E4F0FB;color:#2F5E8C;border-radius:999px;padding:4px 12px;font-size:16px}
-.q{font-size:clamp(22px,4.4vw,30px);margin:8px 0 12px}
-.orders{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.ocard{background:#FFF1DE;border-radius:16px;padding:10px 14px;font-size:20px;text-align:center;min-width:120px}
-.ocard .pr{color:#E0703A}
-.choices{display:flex;gap:10px;flex-wrap:wrap}
-.cbtn{border:0;border-radius:18px;background:#7CC9A6;color:#fff;font:inherit;font-size:clamp(22px,4.5vw,30px);padding:14px 22px;min-width:150px;cursor:pointer;box-shadow:0 5px 0 #4FA27E}
-.cbtn:active{transform:translateY(3px);box-shadow:0 2px 0 #4FA27E}
-.money{display:flex;gap:6px;align-items:center;flex-wrap:wrap;min-height:58px}
-.coin{border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;border:3px solid;flex:none}
-.c100{width:48px;height:48px;background:#E3E6EA;border-color:#A9AEB5;color:#555}
-.c500{width:56px;height:56px;background:#EDEFF2;border-color:#9AA0A8;color:#444}
-.bill{width:92px;height:48px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;border:3px solid;flex:none}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+html,body{margin:0;height:100%;overflow:hidden;background:#2B1D16;font-family:'Jua',sans-serif;color:#5B3A2A;touch-action:manipulation}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:0 0;overflow:hidden;background:#FFEFD6}
+.abs{position:absolute}
+/* 배경 */
+#floor{left:0;top:600px;width:1280px;height:120px;background:#EDC096}
+#floorLine{left:0;top:600px;width:1280px;height:10px;background:#E2AE80}
+#window{left:470px;top:40px;width:220px;height:150px;border-radius:24px;background:#fff;padding:12px}
+#window div{width:100%;height:100%;border-radius:16px;background:#BFE7F7;position:relative;overflow:hidden}
+#board{left:960px;top:24px;width:290px;height:230px;border-radius:22px;background:#3F6E5C;padding:14px 16px;color:#fff}
+#board .row{display:flex;align-items:center;gap:8px;height:50px}
+#board .row svg{width:44px;height:44px;flex:none}
+#board .row .p{margin-left:auto;font-size:26px;color:#FFE07A}
+/* HUD */
+#hud{left:20px;top:16px;display:flex;gap:12px;align-items:center}
+.chip{background:#fff;border-radius:999px;height:52px;padding:0 18px 0 8px;display:flex;align-items:center;gap:8px;font-size:28px;box-shadow:0 3px 0 #EAD5BC}
+.chip .ci{width:38px;height:38px;border-radius:50%;background:#F6C945;border:3px solid #D9A92A}
+#dots{display:flex;gap:8px;padding:0 14px}
+#dots i{width:18px;height:18px;border-radius:50%;background:#EAD5BC;display:block}
+#dots i.on{background:#F28C5B}
+#dots i.done{background:#7CC9A6}
+.ibtn{width:52px;height:52px;border-radius:50%;border:0;background:#fff;box-shadow:0 3px 0 #EAD5BC;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#5B3A2A}
+.ibtn svg{width:28px;height:28px}
+#delta{left:110px;top:70px;font-size:40px;opacity:0;transition:all .8s}
+/* 캐릭터 */
+#cust{left:40px;top:250px;width:380px;height:470px}
+#custBody{transform-origin:190px 470px}
+.walkin{animation:walkin 1.3s ease-out both}
+@keyframes walkin{0%{transform:translateX(-520px)}100%{transform:translateX(0)}}
+.walkout{animation:walkout 1s ease-in both}
+@keyframes walkout{0%{transform:translateX(0)}100%{transform:translateX(-560px)}}
+.bob{animation:bob .32s ease-in-out infinite alternate}
+@keyframes bob{to{transform:translateY(-14px)}}
+.breathe{animation:breathe 2.4s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.025,0.985)}}
+.jump{animation:jump .45s ease-out 2}
+@keyframes jump{40%{transform:translateY(-60px) scale(1.04)}100%{transform:translateY(0)}}
+.shake{animation:shake .5s}
+@keyframes shake{20%{transform:rotate(-7deg)}40%{transform:rotate(6deg)}60%{transform:rotate(-4deg)}80%{transform:rotate(2deg)}}
+.blink{animation:blink 4s infinite;transform-box:fill-box;transform-origin:center}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+#owner{left:710px;top:200px;width:260px;height:300px}
+#ownerBody{transform-origin:130px 300px}
+#tag{left:770px;top:176px;background:#6CA6D9;color:#fff;border-radius:999px;padding:4px 16px;font-size:22px}
+/* 카운터 */
+#counterTop{left:360px;top:470px;width:920px;height:34px;border-radius:17px;background:#FFB98A}
+#counter{left:380px;top:490px;width:900px;height:240px;border-radius:30px 0 0 0;background:#F28C5B}
+#reg{left:1050px;top:356px;width:170px;height:118px}
+/* 말풍선 */
+#bubble{left:40px;top:96px;min-width:200px;max-width:420px;min-height:120px;background:#fff;border-radius:34px;padding:16px 22px;display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;box-shadow:0 5px 0 #E8D2B8;transform-origin:30% 100%;transition:transform .25s}
+#bubble.hide{transform:scale(0)}
+#bubble:after{content:'';position:absolute;left:120px;bottom:-26px;border:16px solid transparent;border-top:20px solid #fff}
+.item{position:relative;text-align:center}
+.item svg{width:96px;height:96px;display:block}
+.item .q{position:absolute;right:-8px;top:-6px;background:#F28C5B;color:#fff;border-radius:999px;font-size:24px;padding:0 10px}
+.item .pr{font-size:26px;color:#E0703A}
+.big{font-size:64px;color:#F28C5B;line-height:1}
+/* 조작 영역 */
+#area{left:400px;top:566px;width:640px;height:150px;display:flex;align-items:center;justify-content:center;gap:22px}
+.choice{border:0;border-radius:28px;background:#7CC9A6;color:#fff;font:inherit;font-size:52px;padding:18px 30px;min-width:210px;cursor:pointer;box-shadow:0 8px 0 #4FA27E;transition:transform .1s}
+.choice:active{transform:translateY(5px);box-shadow:0 3px 0 #4FA27E}
+.choice.glow{animation:glow .6s infinite alternate}
+@keyframes glow{to{background:#FFD166;color:#5B3A2A;box-shadow:0 8px 0 #E0A93A}}
+.money{display:inline-flex;align-items:center;justify-content:center;border:4px solid;flex:none;cursor:pointer;transition:transform .1s}
+.money:active{transform:scale(.92)}
+.coin{border-radius:50%;font-size:26px}
+.c100{width:96px;height:96px;background:#E3E6EA;border-color:#A9AEB5;color:#555}
+.c500{width:112px;height:112px;background:#EDEFF2;border-color:#8F96A0;color:#444}
+.bill{width:176px;height:92px;border-radius:12px;font-size:32px}
 .b1000{background:#BFD6F2;border-color:#7FA6D6;color:#1F4E85}
 .b5000{background:#F5C7A6;border-color:#DE9264;color:#8A3B12}
 .b10000{background:#BFE3B8;border-color:#7DBF72;color:#2D6A2A}
-.calc{background:#FFF8EE;border-radius:16px;padding:6px 14px;margin-bottom:10px}
-.kv{display:flex;justify-content:space-between;font-size:21px;padding:6px 0;border-bottom:2px dashed #F0E0CC}
-.kv:last-child{border-bottom:0}
-.kv .big{font-size:26px;color:#E0703A}
-.two{display:flex;gap:10px;flex-wrap:wrap}
-.box{flex:1;min-width:250px;border-radius:16px;padding:10px}
-.box .t{font-size:16px;margin-bottom:6px}
-.safe{background:#EDF3F8}
-.safe .t{color:#2F5E8C}
-.safe button{border:0;background:transparent;padding:0;cursor:pointer;margin:2px}
-.safe button:active{transform:scale(.92)}
-.plate{background:#FFF8EE;border:3px dashed #E8C9A6}
-.plate .t{color:#B07A4F}
-.plate .money>*{cursor:pointer}
-.acts{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
-.abtn{border:0;border-radius:16px;font:inherit;font-size:22px;padding:12px 22px;cursor:pointer}
-.ok{background:#F28C5B;color:#fff;box-shadow:0 5px 0 #C9683C}
-.no{background:#EFE3D3;color:#7A5A44}
-.hint{background:#EEF7FF;border-radius:16px;padding:12px;margin-top:12px;font-size:19px;line-height:1.5;color:#2F4E6E}
-.loss{color:#D4483B}
-.earn{font-size:44px;color:#E0703A;margin:6px 0}
-.lv{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
-.lv button{border:3px solid #EAD5BC;background:#fff;border-radius:16px;font:inherit;font-size:20px;padding:12px 16px;cursor:pointer;color:#5B3A2A}
+.sm .coin.c100{width:64px;height:64px;font-size:20px}.sm .coin.c500{width:74px;height:74px;font-size:20px}.sm .bill{width:118px;height:62px;font-size:22px}
+#paw{left:330px;top:420px;display:flex;gap:-30px}
+#paw .money{margin-left:-80px;box-shadow:0 4px 0 rgba(0,0,0,.08)}
+#paw .money:first-child{margin-left:0}
+#paw.pulse{animation:pulse .7s infinite alternate}
+@keyframes pulse{to{transform:scale(1.08) rotate(-3deg)}}
+#plate{left:390px;top:392px;width:300px;height:84px;border-radius:50%;background:#FFF8EE;border:4px dashed #E8C9A6;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 20px}
+#plate .money{margin-left:-80px}#plate .money:first-child{margin-left:0}
+#eq{left:420px;top:506px;background:#fff;border-radius:22px;padding:2px 22px;font-size:40px;z-index:5;box-shadow:0 4px 0 #E8D2B8;white-space:nowrap}
+#eq b{color:#F28C5B;font-weight:400}
+#eq.flash{animation:flash .5s 3}
+@keyframes flash{50%{background:#FFF3B0;transform:scale(1.06)}}
+#give{left:1060px;top:540px;width:180px;height:150px;border:0;border-radius:36px;background:#F28C5B;color:#fff;font:inherit;font-size:34px;box-shadow:0 8px 0 #C9683C;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+#give svg{width:64px;height:64px}
+#give:disabled{background:#E8CDB8;box-shadow:0 8px 0 #D4B49B}
+.fly{position:absolute;z-index:50;transition:transform .8s cubic-bezier(.5,0,.3,1),opacity .8s;pointer-events:none}
+.spark{position:absolute;width:22px;height:22px;border-radius:50%;background:#FFD166;z-index:60;pointer-events:none;transition:transform .9s ease-out,opacity .9s}
+/* 손가락 */
+#hand{width:110px;height:110px;z-index:80;pointer-events:none;display:none;animation:tap 1s infinite}
+@keyframes tap{50%{transform:translate(-10px,-16px)}}
+/* 덮개 화면 */
+.cover{position:absolute;inset:0;background:rgba(255,239,214,.96);z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px}
+.cover.hide{display:none}
+.lv{display:flex;gap:24px}
+.lv button{width:210px;height:210px;border-radius:40px;border:6px solid #EAD5BC;background:#fff;font:inherit;font-size:60px;color:#5B3A2A;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.lv button small{font-size:28px;color:#B08A6E}
 .lv button.on{border-color:#F28C5B;background:#FFF1E6}
-.stat{display:flex;justify-content:space-between;font-size:22px;padding:8px 2px;border-bottom:2px dashed #F0E0CC}
-.wrap{position:relative}
-.phead{display:flex;align-items:center;gap:8px}
-.replay{margin-left:auto;border:0;background:#E4F0FB;color:#2F5E8C;border-radius:999px;padding:6px 14px;font:inherit;font-size:17px;cursor:pointer;display:flex;align-items:center;gap:6px}
-.ocard svg{display:block;margin:0 auto 4px}
-.hand{position:absolute;width:64px;height:64px;pointer-events:none;z-index:9;animation:tap 1s infinite;display:none}
-@keyframes tap{0%,100%{transform:translate(0,0)}50%{transform:translate(-6px,-10px)}}
-.note{font-size:13px;color:#B09A88;text-align:center;margin-top:10px;font-family:sans-serif}
+.play{width:200px;height:200px;border-radius:50%;border:0;background:#F28C5B;box-shadow:0 10px 0 #C9683C;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.play svg{width:96px;height:96px}
+.logo{font-size:84px;color:#E0703A}
+.sumrow{display:flex;gap:40px;align-items:center;font-size:64px}
+.sumrow .k{display:flex;align-items:center;gap:14px}
+.loss{color:#D4483B}
+#rotate{position:fixed;inset:0;background:#FFEFD6;z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;gap:24px;font-size:30px}
+#rotate svg{width:150px;height:150px;animation:rot 2s ease-in-out infinite}
+@keyframes rot{0%,20%{transform:rotate(0)}50%,80%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
+@media (orientation:portrait){#rotate{display:flex}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <div class="pill">가게 돈 <b id="shopMoney">10,000원</b></div>
-    <div class="pill" id="custCount">손님 0 / 5</div>
-    <div class="sp"></div>
-    <button class="ibtn" id="sndBtn">소리 켜짐</button>
+<div id="rotate"><svg viewBox="0 0 100 100"><rect x="30" y="10" width="40" height="80" rx="8" fill="#fff" stroke="#5B3A2A" stroke-width="5"/><circle cx="50" cy="80" r="4" fill="#5B3A2A"/></svg><div>옆으로 돌려 주세요</div></div>
+<div id="stage">
+  <div class="abs" id="floor"></div><div class="abs" id="floorLine"></div>
+  <div class="abs" id="window"><div><svg width="196" height="126" viewBox="0 0 196 126"><circle cx="150" cy="36" r="20" fill="#FFE07A"/><ellipse cx="60" cy="96" rx="44" ry="16" fill="#fff"/><ellipse cx="90" cy="88" rx="28" ry="14" fill="#fff"/><rect x="94" y="0" width="8" height="126" fill="#fff"/></svg></div></div>
+  <div class="abs" id="board"></div>
+  <div class="abs" id="owner"><svg id="ownerBody" width="260" height="300" viewBox="0 0 260 300">
+    <rect x="70" y="190" width="120" height="110" rx="34" fill="#6CC3A0"/><rect x="92" y="206" width="76" height="94" rx="18" fill="#fff"/><rect x="114" y="236" width="32" height="24" rx="8" fill="#F7A072"/>
+    <circle cx="130" cy="126" r="70" fill="#FFD6B5"/><path d="M60 122q2-80 72-78q70 0 66 78q-16-36-70-40q-50 4-68 40z" fill="#5B3A2A"/>
+    <g class="blink"><circle cx="105" cy="134" r="8" fill="#3A2A22"/><circle cx="155" cy="134" r="8" fill="#3A2A22"/></g>
+    <ellipse cx="88" cy="160" rx="12" ry="8" fill="#FFA9A0"/><ellipse cx="172" cy="160" rx="12" ry="8" fill="#FFA9A0"/>
+    <path id="oMouth" d="M115 164q15 16 30 0" fill="none" stroke="#3A2A22" stroke-width="5" stroke-linecap="round"/></svg></div>
+  <div class="abs" id="tag">나 · 사장님</div>
+  <div class="abs" id="counterTop"></div><div class="abs" id="counter"></div>
+  <div class="abs" id="reg"><svg width="170" height="118" viewBox="0 0 170 118"><rect x="0" y="20" width="170" height="98" rx="18" fill="#7C9BB5"/><rect x="18" y="34" width="134" height="34" rx="8" fill="#DDEBF5"/><rect x="12" y="86" width="146" height="18" rx="6" fill="#5E7E99"/><rect x="60" y="0" width="50" height="24" rx="6" fill="#7C9BB5"/><text x="85" y="58" text-anchor="middle" font-size="22" fill="#2F5E8C" font-family="Jua">금고</text></svg></div>
+  <div class="abs" id="cust"></div>
+  <div class="abs hide" id="bubble"></div>
+  <div class="abs" id="eq" style="display:none"></div>
+  <div class="abs" id="plate" style="display:none"></div>
+  <div class="abs" id="paw"></div>
+  <div class="abs" id="area"></div>
+  <button class="abs" id="give" style="display:none" aria-label="거스름돈 주기"><svg viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 34l12 12 24-26"/></svg>주기</button>
+  <div class="abs" id="hud"><div class="chip"><span class="ci"></span><span id="money">10,000</span></div><div class="chip" id="dots"></div></div>
+  <div class="abs" id="delta"></div>
+  <div class="abs" style="left:840px;top:16px;display:flex;gap:12px">
+    <button class="ibtn" id="rpBtn" aria-label="다시 듣기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg></button>
+    <button class="ibtn" id="sndBtn" aria-label="소리 켜기 끄기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></button>
   </div>
-  <div class="scene">
-    <svg viewBox="0 0 680 330" role="img" aria-label="카페 장면">
-      <rect x="0" y="0" width="680" height="330" fill="#FFEFD6"/>
-      <rect x="0" y="290" width="680" height="40" fill="#EDC096"/>
-      <rect x="0" y="290" width="680" height="8" fill="#E2AE80"/>
-      <rect x="502" y="14" width="166" height="126" rx="16" fill="#3F6E5C"/>
-      <text x="516" y="42" fill="#FFFFFF" font-size="18" font-family="Jua, sans-serif">오늘의 메뉴</text>
-      <g id="board" font-family="Jua, sans-serif" font-size="15"></g>
-      <g id="cust"></g>
-      <g transform="translate(-50,0)">
-        <rect x="400" y="206" width="96" height="80" rx="26" fill="#6CC3A0"/>
-        <rect x="418" y="218" width="60" height="70" rx="14" fill="#FFFFFF"/>
-        <rect x="436" y="240" width="24" height="18" rx="6" fill="#F7A072"/>
-        <circle cx="448" cy="160" r="50" fill="#FFD6B5"/>
-        <path d="M398 156 q2 -58 52 -56 q50 0 48 56 q-12 -26 -50 -28 q-36 2 -50 28 z" fill="#5B3A2A"/>
-        <circle cx="430" cy="166" r="6" fill="#3A2A22"/><circle cx="468" cy="166" r="6" fill="#3A2A22"/>
-        <circle cx="432" cy="164" r="2" fill="#FFFFFF"/><circle cx="470" cy="164" r="2" fill="#FFFFFF"/>
-        <ellipse cx="418" cy="184" rx="9" ry="6" fill="#FFA9A0"/><ellipse cx="480" cy="184" rx="9" ry="6" fill="#FFA9A0"/>
-        <path id="mouth" d="M438 188 q11 12 22 0" fill="none" stroke="#3A2A22" stroke-width="3" stroke-linecap="round"/>
-        <rect x="402" y="78" width="92" height="24" rx="12" fill="#6CA6D9"/>
-        <text x="448" y="95" fill="#FFFFFF" font-size="15" font-family="Jua, sans-serif" text-anchor="middle">나 · 사장님</text>
-      </g>
-      <rect x="280" y="262" width="340" height="70" rx="22" fill="#F28C5B"/>
-      <rect x="270" y="252" width="360" height="22" rx="11" fill="#FFB98A"/>
-      <rect x="520" y="196" width="92" height="58" rx="12" fill="#7C9BB5"/>
-      <rect x="532" y="206" width="68" height="20" rx="5" fill="#DDEBF5"/>
-      <rect x="528" y="236" width="76" height="12" rx="4" fill="#5E7E99"/>
-      <text x="566" y="221" fill="#2F5E8C" font-size="13" font-family="Jua, sans-serif" text-anchor="middle">금고</text>
-      <g id="fly"></g>
-    </svg>
-    <div class="bubble hide" id="bubble"></div>
-  </div>
-  <div class="panel" id="panel"></div>
-  <svg class="hand" id="hand" viewBox="0 0 64 64"><path d="M22 6c4 0 6 3 6 6v18l3-1c3-1 6 1 6 1l4-1c3-1 6 1 6 2l3 0c3 0 5 2 5 5v10c0 9-7 16-16 16h-6c-6 0-10-3-13-8L9 37c-2-3 0-6 3-6 2 0 4 1 5 3l1 2V12c0-3 2-6 4-6z" fill="#FFE0C2" stroke="#5B3A2A" stroke-width="3" stroke-linejoin="round"/></svg>
-  <div class="note">꼬마사장 시제품 v0.4.2 · 위 칸은 손님, 아래 칸은 사장님(나)이 할 일</div>
+  <svg class="abs" id="hand" viewBox="0 0 64 64"><path d="M22 6c4 0 6 3 6 6v18l3-1c3-1 6 1 6 1l4-1c3-1 6 1 6 2l3 0c3 0 5 2 5 5v10c0 9-7 16-16 16h-6c-6 0-10-3-13-8L9 37c-2-3 0-6 3-6 2 0 4 1 5 3l1 2V12c0-3 2-6 4-6z" fill="#FFE0C2" stroke="#5B3A2A" stroke-width="3" stroke-linejoin="round"/></svg>
+  <div class="cover" id="cover"></div>
 </div>
 <script>
 const LV={
- 1:{name:'6~7세',menu:[['사탕',100],['쿠키',200],['우유',300],['주스',400]],safe:[100,500],maxQty:1,maxItems:2,maxTotal:900},
- 2:{name:'8세',menu:[['아메리카노',1500],['우유',1000],['쿠키',500],['라떼',2000]],safe:[100,500,1000],maxQty:1,maxItems:2,maxTotal:4500},
- 3:{name:'9~10세',menu:[['아메리카노',1500],['라떼',2000],['머핀',1200],['케이크',2500]],safe:[100,500,1000,5000],maxQty:3,maxItems:2,maxTotal:9800}
+ 1:{age:'6~7',menu:[['사탕',100],['쿠키',200],['우유',300],['주스',400]],safe:[100,500],maxQty:1,maxItems:2,maxTotal:900},
+ 2:{age:'8',menu:[['아메리카노',1500],['우유',1000],['쿠키',500],['라떼',2000]],safe:[100,500,1000],maxQty:1,maxItems:2,maxTotal:4500},
+ 3:{age:'9~10',menu:[['아메리카노',1500],['라떼',2000],['머핀',1200],['케이크',2500]],safe:[100,500,1000,5000],maxQty:3,maxItems:2,maxTotal:9800}
 };
-const S={level:2,money:10000,n:0,perDay:5,sales:0,lost:0,sound:true,order:null,total:0,paid:[],paidSum:0,tries:0,plate:[],busy:false,choiceSet:null};
+const S={level:2,money:10000,n:0,perDay:5,sales:0,lost:0,sound:true,order:null,total:0,paid:[],paidSum:0,tries:0,plate:[],busy:false,choiceSet:null,phase:''};
 const $=id=>document.getElementById(id);
-const won=v=>v.toLocaleString('ko-KR')+'원';
+const fmt=v=>v.toLocaleString('ko-KR');
+const won=v=>fmt(v)+'원';
 const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 const sum=a=>a.reduce((x,y)=>x+y,0);
 const unit=n=>/쿠키|머핀|케이크|사탕/.test(n)?'개':'잔';
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+/* 화면 맞추기 */
+function fit(){const s=Math.min(innerWidth/1280,innerHeight/720);const st=$('stage');st.style.transform=`scale(${s}) translate(-50%,-50%)`;st.style.transformOrigin='0 0';st.style.left='50%';st.style.top='50%';st.style.transform=`translate(-50%,-50%) scale(${s})`;st.style.transformOrigin='center'}
+addEventListener('resize',fit);fit();
+/* 소리 */
 let AC=null;
-function beep(ok){if(!S.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime;(ok?[880,1320]:[300,220]).forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;o.type=ok?'triangle':'sine';g.gain.setValueAtTime(.18,t+i*.12);g.gain.exponentialRampToValueAtTime(.001,t+i*.12+.25);o.connect(g);g.connect(AC.destination);o.start(t+i*.12);o.stop(t+i*.12+.3)})}catch(e){}}
-let VOICE=null,LAST=[],PEND=[];
-let VOICE2=null;function pickVoice(){try{const vs=speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang));const nat=vs.filter(v=>/Natural|Online|Neural|Premium|Enhanced/i.test(v.name));VOICE=nat.find(v=>/SunHi|Yuna/i.test(v.name))||nat[0]||vs.find(v=>/Google|Yuna|Sora/i.test(v.name))||vs[0]||null;VOICE2=nat.find(v=>v!==VOICE)||VOICE}catch(e){}}
+function tone(fs,type,len){if(!S.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime;fs.forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;o.type=type;g.gain.setValueAtTime(.16,t+i*len);g.gain.exponentialRampToValueAtTime(.001,t+i*len+.28);o.connect(g);g.connect(AC.destination);o.start(t+i*len);o.stop(t+i*len+.3)})}catch(e){}}
+const sfx={ok:()=>tone([880,1320],'triangle',.11),no:()=>tone([300,220],'sine',.14),coin:()=>tone([1500],'triangle',.1),ching:()=>tone([1046,1318,1568,2093],'triangle',.08),pop:()=>tone([660],'sine',.1)};
+let VOICE=null,VOICE2=null,LAST=[];
+function pickVoice(){try{const vs=speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang));const nat=vs.filter(v=>/Natural|Online|Neural|Premium|Enhanced/i.test(v.name));VOICE=nat.find(v=>/SunHi|Yuna/i.test(v.name))||nat[0]||vs.find(v=>/Google|Yuna|Sora/i.test(v.name))||vs[0]||null;VOICE2=nat.find(v=>v!==VOICE)||VOICE}catch(e){}}
 if(window.speechSynthesis){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
-function talk(parts){LAST=parts;if(!S.sound||!window.speechSynthesis||!parts.length)return;try{const busy=speechSynthesis.speaking||speechSynthesis.pending;if(busy)speechSynthesis.cancel();speechSynthesis.resume&&speechSynthesis.resume();let i=0;const next=()=>{if(i>=parts.length)return;const [role,txt]=parts[i++];const u=new SpeechSynthesisUtterance(txt.replace(/,/g,'').replace(/·/g,' '));u.lang='ko-KR';const vv=role==='cust'?VOICE2:VOICE;if(vv)u.voice=vv;u.rate=role==='cust'?1.0:.92;u.pitch=role==='cust'?(VOICE2&&VOICE2!==VOICE?1.15:1.4):1.0;u.onend=next;u.onerror=next;speechSynthesis.speak(u)};busy?setTimeout(next,120):next()}catch(e){}}
-function unlockVoice(){try{if(!window.speechSynthesis)return;pickVoice();const u=new SpeechSynthesisUtterance(' ');u.lang='ko-KR';u.volume=0;speechSynthesis.speak(u)}catch(e){}}
-function voiceInfo(){if(!window.speechSynthesis)return '이 화면은 음성 기능을 지원하지 않아요';const vs=speechSynthesis.getVoices();const ko=vs.filter(v=>/^ko/i.test(v.lang));return `한국어 목소리 ${ko.length}개 · 안내: ${VOICE?VOICE.name:'없음'} · 손님: ${VOICE2?VOICE2.name:'없음'}`}
-function custSay(txt,shake){const b=$('bubble');b.classList.remove('hide');b.innerHTML=`<small>${CUST[S.cust].name} 손님</small>${txt}`;if(shake){b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake')}PEND.push(['cust',txt])}
-let IDLE=null;
-function hideHand(){$('hand').style.display='none';clearTimeout(IDLE)}
-function pointAt(sel,delay){clearTimeout(IDLE);IDLE=setTimeout(()=>{const el=document.querySelector(sel);if(!el)return;const w=document.querySelector('.wrap').getBoundingClientRect(),r=el.getBoundingClientRect();const h=$('hand');h.style.left=(r.left-w.left+r.width/2-14)+'px';h.style.top=(r.top-w.top+r.height/2-6)+'px';h.style.display='block'},delay)}
-document.addEventListener('pointerdown',hideHand,true);
-function icon(n){const svg=b=>`<svg width="56" height="56" viewBox="0 0 60 60">${b}</svg>`;
- if(n==='아메리카노')return svg('<path d="M14 20h28l-3 30H17z" fill="#fff" stroke="#D8C3AE" stroke-width="2"/><ellipse cx="28" cy="20" rx="14" ry="4" fill="#6B4226"/><path d="M42 26q10 2 0 14" fill="none" stroke="#D8C3AE" stroke-width="4"/>');
- if(n==='라떼')return svg('<path d="M14 20h28l-3 30H17z" fill="#fff" stroke="#D8C3AE" stroke-width="2"/><ellipse cx="28" cy="20" rx="14" ry="4" fill="#C89B6D"/><path d="M25 19q3-3 3 0q0-3 3 0l-3 3z" fill="#fff"/><path d="M42 26q10 2 0 14" fill="none" stroke="#D8C3AE" stroke-width="4"/>');
- if(n==='우유')return svg('<path d="M17 12h26l-3 40H20z" fill="#DDEFFA"/><path d="M18 24h24l-2 28H20z" fill="#fff" stroke="#DDEFFA" stroke-width="2"/>');
- if(n==='주스')return svg('<path d="M17 14h26l-3 38H20z" fill="#DDEFFA"/><path d="M18 22h24l-2 30H20z" fill="#FFA94D"/><rect x="33" y="4" width="4" height="22" rx="2" fill="#FF6B8A" transform="rotate(12 35 15)"/>');
- if(n==='쿠키')return svg('<circle cx="30" cy="30" r="20" fill="#D9A066"/><circle cx="22" cy="24" r="3" fill="#6B4226"/><circle cx="35" cy="22" r="3" fill="#6B4226"/><circle cx="30" cy="34" r="3" fill="#6B4226"/><circle cx="39" cy="36" r="2.5" fill="#6B4226"/><circle cx="21" cy="37" r="2.5" fill="#6B4226"/>');
- if(n==='사탕')return svg('<path d="M10 22l10 8-10 8z" fill="#FFB3C7"/><path d="M50 22l-10 8 10 8z" fill="#FFB3C7"/><circle cx="30" cy="30" r="12" fill="#FF7AA2"/><path d="M24 26q6 8 12 0" fill="none" stroke="#fff" stroke-width="3"/>');
- if(n==='머핀')return svg('<path d="M14 30h32l-5 22H19z" fill="#E58A5C"/><path d="M12 32q0-20 18-20t18 20z" fill="#8B5A3C"/><circle cx="24" cy="22" r="2" fill="#FFE07A"/><circle cx="34" cy="20" r="2" fill="#FFE07A"/>');
- if(n==='케이크')return svg('<path d="M8 46l44 0-10-26z" fill="#FFE3B3"/><path d="M42 20l10 26h-6l-9-22z" fill="#F7B6C2"/><circle cx="43" cy="16" r="5" fill="#E8414E"/><rect x="8" y="46" width="44" height="6" rx="2" fill="#F7B6C2"/>');
+function talk(parts){LAST=parts;return new Promise(res=>{if(!S.sound||!window.speechSynthesis||!parts.length){setTimeout(res,parts.length?900*parts.length:0);return}
+ try{const busy=speechSynthesis.speaking||speechSynthesis.pending;if(busy)speechSynthesis.cancel();let i=0;const next=()=>{if(i>=parts.length){res();return}const [role,txt]=parts[i++];const u=new SpeechSynthesisUtterance(txt.replace(/,/g,''));u.lang='ko-KR';const vv=role==='cust'?VOICE2:VOICE;if(vv)u.voice=vv;u.rate=role==='cust'?1.02:.94;u.pitch=role==='cust'?(VOICE2&&VOICE2!==VOICE?1.15:1.45):1.0;let done=false;const go=()=>{if(!done){done=true;next()}};u.onend=go;u.onerror=go;setTimeout(go,txt.length*260+1800);speechSynthesis.speak(u)};busy?setTimeout(next,120):next()}catch(e){res()}})}
+function unlock(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();if(window.speechSynthesis){pickVoice();const u=new SpeechSynthesisUtterance(' ');u.volume=0;u.lang='ko-KR';speechSynthesis.speak(u)}}catch(e){}}
+/* 그림 */
+function icon(n){const s=b=>`<svg viewBox="0 0 60 60">${b}</svg>`;
+ if(n==='아메리카노')return s('<path d="M14 20h28l-3 30H17z" fill="#fff" stroke="#D8C3AE" stroke-width="2"/><ellipse cx="28" cy="20" rx="14" ry="4" fill="#6B4226"/><path d="M42 26q10 2 0 14" fill="none" stroke="#D8C3AE" stroke-width="4"/>');
+ if(n==='라떼')return s('<path d="M14 20h28l-3 30H17z" fill="#fff" stroke="#D8C3AE" stroke-width="2"/><ellipse cx="28" cy="20" rx="14" ry="4" fill="#C89B6D"/><path d="M25 19q3-3 3 0q0-3 3 0l-3 3z" fill="#fff"/><path d="M42 26q10 2 0 14" fill="none" stroke="#D8C3AE" stroke-width="4"/>');
+ if(n==='우유')return s('<path d="M17 12h26l-3 40H20z" fill="#DDEFFA"/><path d="M18 24h24l-2 28H20z" fill="#fff" stroke="#C9E3F5" stroke-width="2"/>');
+ if(n==='주스')return s('<path d="M17 14h26l-3 38H20z" fill="#DDEFFA"/><path d="M18 22h24l-2 30H20z" fill="#FFA94D"/><rect x="33" y="4" width="4" height="22" rx="2" fill="#FF6B8A" transform="rotate(12 35 15)"/>');
+ if(n==='쿠키')return s('<circle cx="30" cy="30" r="20" fill="#D9A066"/><circle cx="22" cy="24" r="3" fill="#6B4226"/><circle cx="35" cy="22" r="3" fill="#6B4226"/><circle cx="30" cy="34" r="3" fill="#6B4226"/><circle cx="39" cy="36" r="2.5" fill="#6B4226"/><circle cx="21" cy="37" r="2.5" fill="#6B4226"/>');
+ if(n==='사탕')return s('<path d="M10 22l10 8-10 8z" fill="#FFB3C7"/><path d="M50 22l-10 8 10 8z" fill="#FFB3C7"/><circle cx="30" cy="30" r="12" fill="#FF7AA2"/><path d="M24 26q6 8 12 0" fill="none" stroke="#fff" stroke-width="3"/>');
+ if(n==='머핀')return s('<path d="M14 30h32l-5 22H19z" fill="#E58A5C"/><path d="M12 32q0-20 18-20t18 20z" fill="#8B5A3C"/><circle cx="24" cy="22" r="2" fill="#FFE07A"/><circle cx="34" cy="20" r="2" fill="#FFE07A"/>');
+ if(n==='케이크')return s('<path d="M8 46l44 0-10-26z" fill="#FFE3B3"/><path d="M42 20l10 26h-6l-9-22z" fill="#F7B6C2"/><circle cx="43" cy="16" r="5" fill="#E8414E"/><rect x="8" y="46" width="44" height="6" rx="2" fill="#F7B6C2"/>');
  return ''}
-function hideBubble(){$('bubble').classList.add('hide')}
-function mouth(happy){$('mouth').setAttribute('d',happy?'M438 188 q11 12 22 0':'M438 194 q11 -8 22 0')}
-function split(v){const out=[];[10000,5000,1000,500,100].forEach(d=>{while(v>=d){out.push(d);v-=d}});return out}
-function moneyHTML(v){return v>=1000?`<div class="bill b${v}">${won(v)}</div>`:`<div class="coin c${v}">${v}</div>`}
-function pile(list){return `<div class="money">${list.map(moneyHTML).join('')}</div>`}
-function updTop(){$('shopMoney').textContent=won(S.money);$('custCount').textContent=`손님 ${S.n} / ${S.perDay}`}
-function drawBoard(){$('board').innerHTML=LV[S.level].menu.map((m,i)=>`<text x="516" y="${68+i*21}" fill="#FFFFFF">${m[0]}</text><text x="656" y="${68+i*21}" fill="#FFE07A" text-anchor="end">${won(m[1])}</text>`).join('')}
-function svgMoney(v,x,y){const c={1000:['#BFD6F2','#1F4E85'],5000:['#F5C7A6','#8A3B12'],10000:['#BFE3B8','#2D6A2A']};
- return v>=1000?`<rect x="${x-30}" y="${y-15}" width="60" height="30" rx="5" fill="${c[v][0]}" stroke="${c[v][1]}" stroke-width="1.5"/><text x="${x}" y="${y+5}" font-size="12" text-anchor="middle" fill="${c[v][1]}" font-family="Jua, sans-serif">${v.toLocaleString()}</text>`
- :`<circle cx="${x}" cy="${y}" r="13" fill="#E3E6EA" stroke="#A9AEB5" stroke-width="1.5"/><text x="${x}" y="${y+4}" font-size="10" text-anchor="middle" fill="#555" font-family="Jua, sans-serif">${v}</text>`}
-const PAW=[262,232],SAFE=[566,212];
-function fly(list,from,to,cb){const f=$('fly');f.innerHTML=list.map((v,i)=>`<g>${svgMoney(v,from[0]+i*8,from[1]-i*4)}</g>`).join('');
- const gs=[...f.children];void f.getBoundingClientRect();requestAnimationFrame(()=>gs.forEach(g=>g.style.transform=`translate(${to[0]-from[0]}px,${to[1]-from[1]}px)`));
- setTimeout(()=>{f.innerHTML='';cb&&cb()},1000)}
-function holdMoney(list){$('fly').innerHTML=list.map((v,i)=>`<g>${svgMoney(v,PAW[0]+i*8,PAW[1]-i*4)}</g>`).join('')}
+function moneyEl(v,extra=''){return v>=1000?`<div class="money bill b${v} ${extra}" data-v="${v}">${fmt(v)}</div>`:`<div class="money coin c${v} ${extra}" data-v="${v}">${v}</div>`}
 const CUST={
  bear:{name:'곰돌이',c:'#B07A4F',l:'#D9A97C',m:'#E9C9A2'},
  rabbit:{name:'토끼',c:'#F3ECE4',l:'#F7C6CC',m:'#FFFFFF'},
  squirrel:{name:'다람쥐',c:'#D9823B',l:'#F2C08E',m:'#F7D9B5'}
 };
 function custSVG(k){const p=CUST[k];let ears='';
- if(k==='bear')ears=`<circle cx="146" cy="128" r="20" fill="${p.c}"/><circle cx="234" cy="128" r="20" fill="${p.c}"/><circle cx="146" cy="128" r="10" fill="${p.l}"/><circle cx="234" cy="128" r="10" fill="${p.l}"/>`;
- if(k==='rabbit')ears=`<ellipse cx="166" cy="96" rx="15" ry="46" fill="${p.c}"/><ellipse cx="214" cy="96" rx="15" ry="46" fill="${p.c}"/><ellipse cx="166" cy="100" rx="7" ry="34" fill="${p.l}"/><ellipse cx="214" cy="100" rx="7" ry="34" fill="${p.l}"/>`;
- if(k==='squirrel')ears=`<path d="M78 300 q-60 -90 10 -170 q50 -40 70 30 q-40 40 -10 140 z" fill="#C26B2C"/><path d="M146 140 l6 -36 l24 26 z" fill="${p.c}"/><path d="M234 140 l-6 -36 l-24 26 z" fill="${p.c}"/>`;
- return `${ears}<ellipse cx="190" cy="290" rx="74" ry="66" fill="${p.c}"/><ellipse cx="190" cy="302" rx="44" ry="40" fill="${p.l}"/><path d="M236 268 q20 -18 30 -30" fill="none" stroke="${p.c}" stroke-width="20" stroke-linecap="round"/><circle cx="190" cy="174" r="56" fill="${p.c}"/><ellipse cx="190" cy="196" rx="26" ry="20" fill="${p.m}"/><ellipse cx="190" cy="186" rx="9" ry="6" fill="#3A2A22"/><circle cx="168" cy="162" r="6" fill="#3A2A22"/><circle cx="212" cy="162" r="6" fill="#3A2A22"/><circle cx="170" cy="160" r="2" fill="#fff"/><circle cx="214" cy="160" r="2" fill="#fff"/><ellipse cx="158" cy="184" rx="8" ry="5" fill="#FFA9A0" opacity=".7"/><ellipse cx="222" cy="184" rx="8" ry="5" fill="#FFA9A0" opacity=".7"/><path d="M184 202 q6 6 12 0" fill="none" stroke="#3A2A22" stroke-width="2.5" stroke-linecap="round"/>`}
-function custIn(k){const g=$('cust');g.style.transition='none';g.style.transform='translateX(-360px)';g.innerHTML=custSVG(k);void g.getBoundingClientRect();g.style.transition='';requestAnimationFrame(()=>g.style.transform='translateX(0)')}
-function custOut(){$('cust').style.transform='translateX(-360px)';hideBubble()}
+ if(k==='bear')ears=`<circle cx="128" cy="96" r="30" fill="${p.c}"/><circle cx="252" cy="96" r="30" fill="${p.c}"/><circle cx="128" cy="96" r="15" fill="${p.l}"/><circle cx="252" cy="96" r="15" fill="${p.l}"/>`;
+ if(k==='rabbit')ears=`<ellipse cx="155" cy="56" rx="22" ry="68" fill="${p.c}"/><ellipse cx="225" cy="56" rx="22" ry="68" fill="${p.c}"/><ellipse cx="155" cy="62" rx="10" ry="50" fill="${p.l}"/><ellipse cx="225" cy="62" rx="10" ry="50" fill="${p.l}"/>`;
+ if(k==='squirrel')ears=`<path d="M70 460q-90-130 14-250q74-60 104 44q-60 60-14 206z" fill="#C26B2C"/><path d="M128 120l8-54 36 38z" fill="${p.c}"/><path d="M252 120l-8-54-36 38z" fill="${p.c}"/>`;
+ return `<svg id="custBody" class="breathe" width="380" height="470" viewBox="0 0 380 470">${ears}<ellipse cx="190" cy="420" rx="110" ry="98" fill="${p.c}"/><ellipse cx="190" cy="438" rx="66" ry="60" fill="${p.l}"/><circle cx="190" cy="176" r="86" fill="${p.c}"/><ellipse cx="190" cy="210" rx="40" ry="30" fill="${p.m}"/><ellipse cx="190" cy="196" rx="14" ry="10" fill="#3A2A22"/><g class="blink"><circle cx="156" cy="160" r="10" fill="#3A2A22"/><circle cx="224" cy="160" r="10" fill="#3A2A22"/></g><ellipse cx="138" cy="196" rx="13" ry="8" fill="#FFA9A0" opacity=".7"/><ellipse cx="242" cy="196" rx="13" ry="8" fill="#FFA9A0" opacity=".7"/><path id="cMouth" d="M180 222q10 10 20 0" fill="none" stroke="#3A2A22" stroke-width="4" stroke-linecap="round"/><path d="M262 360q50-30 70-80" fill="none" stroke="${p.c}" stroke-width="34" stroke-linecap="round"/></svg>`}
+function anim(el,cls,ms){el.classList.remove(cls);void el.getBoundingClientRect();el.classList.add(cls);if(ms)setTimeout(()=>el.classList.remove(cls),ms)}
+function custMood(m){const mo=document.getElementById('cMouth');if(mo)mo.setAttribute('d',m==='happy'?'M174 218q16 18 32 0':m==='sad'?'M178 228q12-10 24 0':'M180 222q10 10 20 0');const b=document.getElementById('custBody');if(!b)return;if(m==='happy')anim(b,'jump',950);if(m==='sad')anim(b,'shake',520)}
+function ownerMood(m){$('oMouth').setAttribute('d',m==='sad'?'M115 172q15-10 30 0':'M112 162q18 22 36 0');if(m==='happy')anim($('ownerBody'),'jump',950)}
+function bubble(html){const b=$('bubble');b.innerHTML=html;b.classList.remove('hide');sfx.pop()}
+function hideBubble(){$('bubble').classList.add('hide')}
+/* 손가락 */
+let IDLE=null;
+function hideHand(){$('hand').style.display='none';clearTimeout(IDLE)}
+function pointAt(el,delay=4500){clearTimeout(IDLE);IDLE=setTimeout(()=>{if(!el||!el.isConnected)return;const st=$('stage').getBoundingClientRect(),r=el.getBoundingClientRect(),k=st.width/1280;const h=$('hand');h.style.left=((r.left-st.left+r.width/2)/k-24)+'px';h.style.top=((r.top-st.top+r.height/2)/k-8)+'px';h.style.display='block'},delay)}
+document.addEventListener('pointerdown',hideHand,true);
+/* 날아가는 돈 */
+function stageXY(el){const st=$('stage').getBoundingClientRect(),r=el.getBoundingClientRect(),k=st.width/1280;return[(r.left-st.left)/k,(r.top-st.top)/k]}
+function fly(html,from,to){return new Promise(res=>{const d=document.createElement('div');d.className='fly';d.innerHTML=html;d.style.left=from[0]+'px';d.style.top=from[1]+'px';$('stage').appendChild(d);void d.getBoundingClientRect();requestAnimationFrame(()=>{d.style.transform=`translate(${to[0]-from[0]}px,${to[1]-from[1]}px) scale(.7)`});setTimeout(()=>{d.remove();res()},820)})}
+function sparkle(x,y,n=14){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=['#FFD166','#F28C5B','#7CC9A6','#6CA6D9'][i%4];$('stage').appendChild(s);const a=Math.random()*Math.PI*2,r=80+Math.random()*120;requestAnimationFrame(()=>{s.style.transform=`translate(${Math.cos(a)*r}px,${Math.sin(a)*r}px) scale(.3)`;s.style.opacity='0'});setTimeout(()=>s.remove(),950)}}
+function showDelta(v){const d=$('delta');d.textContent=(v>=0?'+':'−')+fmt(Math.abs(v));d.style.color=v>=0?'#2F9E6E':'#D4483B';d.style.transition='none';d.style.opacity='1';d.style.transform='translateY(0)';void d.offsetWidth;d.style.transition='all 1.4s';d.style.opacity='0';d.style.transform='translateY(-40px)'}
+/* HUD */
+function updHud(){$('money').textContent=fmt(S.money);$('dots').innerHTML=Array.from({length:S.perDay},(_,i)=>`<i class="${i<S.n-1?'done':i===S.n-1?'on':''}"></i>`).join('')}
+function drawBoard(){$('board').innerHTML=LV[S.level].menu.map(m=>`<div class="row">${icon(m[0])}<span style="font-size:22px">${m[0]}</span><span class="p">${fmt(m[1])}</span></div>`).join('')}
+function clearArea(){$('area').innerHTML='';$('paw').innerHTML='';$('paw').classList.remove('pulse');$('plate').style.display='none';$('eq').style.display='none';$('give').style.display='none'}
+/* 시작 화면 */
+function startScreen(){S.phase='start';clearArea();hideBubble();$('cust').innerHTML='';drawBoard();updHud();
+ const c=$('cover');c.classList.remove('hide');
+ c.innerHTML=`<div class="logo">꼬마사장</div><div class="lv">${[1,2,3].map(l=>`<button data-l="${l}" class="${l===S.level?'on':''}">${LV[l].age}<small>살</small></button>`).join('')}</div><button class="play" id="playBtn" aria-label="시작"><svg viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z" fill="#fff"/></svg></button>`;
+ c.querySelectorAll('.lv button').forEach(b=>b.onclick=()=>{unlock();S.level=+b.dataset.l;c.querySelectorAll('.lv button').forEach(x=>x.classList.toggle('on',x===b));drawBoard();sfx.pop();talk([['guide',`${LV[S.level].age}살 단계예요.`]])});
+ $('playBtn').onclick=()=>{unlock();c.classList.add('hide');startDay()};
+ pointAt($('playBtn'),2500)}
+async function startDay(){S.n=0;S.sales=0;S.lost=0;drawBoard();await talk([['guide','가게 문을 열었어요! 첫 손님이 와요.']]);nextCustomer()}
+/* 손님 */
 function genOrder(){const L=LV[S.level];let o,t;do{const items=[...L.menu].sort(()=>Math.random()-.5).slice(0,rnd(1,L.maxItems));o=items.map(m=>({name:m[0],price:m[1],qty:rnd(1,L.maxQty)}));t=o.reduce((s,x)=>s+x.price*x.qty,0)}while(t>L.maxTotal);return{o,t}}
 function genPaid(t){const lv=S.level;if(lv===1)return t<500?[500]:[1000];if(lv===2){if(t<1000)return[1000];if(t<5000&&Math.random()<.35){const k=Math.ceil(t/1000);if(k*1000>t)return Array(k).fill(1000)}return[5000]}return t<5000&&Math.random()<.5?[5000]:[10000]}
 function orderText(o){return o.map(x=>`${x.name} ${x.qty}${unit(x.name)}`).join(', ')+' 주세요!'}
-function task(title,body,guide){$('panel').innerHTML=`<div class="phead"><span class="who">사장님(나) 할 일</span><button class="replay" id="rpBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg>다시 듣기</button></div><div class="q">${title}</div>${body}`;$('rpBtn').onclick=()=>talk(LAST);if(guide)PEND.push(['guide',guide]);if(PEND.length){talk(PEND);PEND=[]}}
-function startScreen(){custOut();$('fly').innerHTML='';drawBoard();updTop();
- task('몇 단계로 가게를 열까요?',`<div class="lv">${[1,2,3].map(l=>`<button data-l="${l}" class="${l===S.level?'on':''}">${l}단계 · ${LV[l].name}</button>`).join('')}</div><div class="acts"><button class="abtn no" id="vtBtn">소리 시험</button><button class="abtn ok" id="openBtn">가게 문 열기</button></div><div class="hint" id="vInfo" style="font-size:15px">소리 시험을 눌러서 목소리가 들리는지 먼저 확인해 주세요.</div>`,null);
- $('vtBtn').onclick=()=>{unlockVoice();talk([['cust','안녕하세요, 사장님! 손님 목소리예요.'],['guide','저는 안내 목소리예요.']]);setTimeout(()=>{$('vInfo').textContent=voiceInfo()+(window.speechSynthesis&&speechSynthesis.speaking?' · 지금 말하는 중':'')},700)};
- document.querySelectorAll('.lv button').forEach(b=>b.onclick=()=>{S.level=+b.dataset.l;startScreen()});
- $('openBtn').onclick=()=>{unlockVoice();startDay()}}
-function startDay(){S.n=0;S.sales=0;S.lost=0;drawBoard();nextCustomer()}
-function nextCustomer(){S.n++;updTop();S.cust=Object.keys(CUST)[rnd(0,2)];const g=genOrder();S.order=g.o;S.total=g.t;S.tries=0;S.plate=[];S.choiceSet=null;mouth(true);$('fly').innerHTML='';custIn(S.cust);
- renderOrder(null,true);setTimeout(()=>{custSay(orderText(S.order));renderOrder()},700)}
+async function nextCustomer(){S.n++;updHud();S.cust=Object.keys(CUST)[rnd(0,2)];const g=genOrder();S.order=g.o;S.total=g.t;S.tries=0;S.plate=[];S.choiceSet=null;clearArea();hideBubble();ownerMood('normal');
+ const c=$('cust');c.className='abs';c.innerHTML=custSVG(S.cust);anim(c,'walkin');const b=$('custBody');b.classList.add('bob');tone([520,620],'sine',.18);
+ await wait(1300);b.classList.remove('bob');
+ bubble(S.order.map(x=>`<div class="item">${icon(x.name)}${x.qty>1?`<span class="q">×${x.qty}</span>`:''}</div>`).join(''));
+ await talk([['cust',`안녕하세요! ${orderText(S.order)}`]]);
+ askTotal()}
 function choices(t){const step=S.level===1?100:(S.level===2?500:[100,500,1000][rnd(0,2)]);const set=new Set([t]);let guard=0;while(set.size<3&&guard++<50){const v=t+step*(Math.random()<.5?-1:1)*rnd(1,2);if(v>0)set.add(v)}return[...set].sort(()=>Math.random()-.5)}
-function renderOrder(hint='',quiet){S.choiceSet=S.choiceSet||choices(S.total);
- task('모두 얼마일까요?',`<div class="orders">${S.order.map(x=>`<div class="ocard">${icon(x.name)}${x.name} ${x.qty}${unit(x.name)}<br><span class="pr">${won(x.price)}${x.qty>1?' × '+x.qty:''}</span></div>`).join('')}</div><div class="choices">${S.choiceSet.map(v=>`<button class="cbtn" data-v="${v}">${won(v)}</button>`).join('')}</div>${hint}`,quiet?null:(hint?null:'손님이 주문한 것, 모두 얼마일까요? 맞는 금액을 눌러요.'));
- document.querySelectorAll('.cbtn').forEach(b=>b.onclick=()=>pickTotal(+b.dataset.v))}
-function pickTotal(v){if(S.busy)return;
- if(v===S.total){beep(true);toPay();return}
- S.tries++;beep(false);mouth(false);
- if(S.tries===1){custSay('어? 그 금액이 아닌 것 같아요.',true);renderOrder()}
- else if(S.tries===2){custSay('음… 다시 한번 봐 주세요.',true);PEND.push(['guide','힌트를 볼까요? 그림 속 돈을 모두 더해 보세요.']);renderOrder(`<div class="hint">힌트: 아래 돈을 모두 더하면 돼요${S.order.map(x=>`<div>${x.name}${x.qty>1?' '+x.qty+unit(x.name):''}</div>`+pile([].concat(...Array(x.qty).fill(split(x.price))))).join('')}</div>`)}
- else{S.busy=true;PEND.push(['guide',`정답은 ${won(S.total)}이에요. 다음엔 꼭 맞혀 봐요.`]);renderOrder(`<div class="hint">정답은 <b>${won(S.total)}</b>이에요. 다음엔 꼭 맞혀 봐요!</div>`);setTimeout(()=>{S.busy=false;toPay()},2600)}}
-function toPay(){S.tries=0;S.paid=genPaid(S.total);S.paidSum=sum(S.paid);mouth(true);holdMoney(S.paid);custSay(`${won(S.total)}이요? 여기 ${won(S.paidSum)} 낼게요.`);
- task('손님이 낸 돈을 받아요',`${pile(S.paid)}<div class="acts"><button class="abtn ok" id="rcvBtn">돈 받기</button></div>`,'손님이 돈을 냈어요. 돈 받기를 눌러서 받아요.');pointAt('#rcvBtn',5000);
- $('rcvBtn').onclick=()=>{if(S.busy)return;S.busy=true;beep(true);fly(S.paid,PAW,SAFE,()=>{S.busy=false;custSay('거스름돈 주세요!');renderChange()})}}
-function renderChange(hint='',quiet){const L=LV[S.level];
- task('거스름돈을 손님에게 줘요',`<div class="calc"><div class="kv"><span>손님한테 받은 돈</span><span>${won(S.paidSum)}</span></div><div class="kv"><span>물건 값</span><span>${won(S.total)}</span></div><div class="kv"><span>손님에게 줄 거스름돈</span><span class="big">?</span></div></div>
- <div class="two"><div class="box safe"><div class="t">내 금고 (눌러서 꺼내요)</div><div>${L.safe.map(d=>`<button data-d="${d}" aria-label="${won(d)}">${moneyHTML(d)}</button>`).join('')}</div></div>
- <div class="box plate"><div class="t">손님에게 줄 돈 (잘못 꺼냈으면 눌러서 빼요)</div><div class="money" id="plateArea">${S.plate.map((d,i)=>`<span data-i="${i}">${moneyHTML(d)}</span>`).join('')}</div></div></div>
- <div class="acts"><button class="abtn no" id="clrBtn">모두 빼기</button><button class="abtn ok" id="giveBtn">거스름돈 주기</button></div>${hint}`,quiet?null:(hint?null:`거스름돈을 줄 차례예요. 받은 돈 ${won(S.paidSum)}에서 물건 값 ${won(S.total)}을 빼면 돼요. 금고에서 돈을 눌러 담고, 거스름돈 주기를 눌러요.`));pointAt(S.plate.length?'#giveBtn':'.safe button',S.plate.length?6000:7000);
- document.querySelectorAll('.safe button').forEach(b=>b.onclick=()=>{if(S.busy)return;S.plate.push(+b.dataset.d);beep(true);renderChange(hint,true)});
- document.querySelectorAll('#plateArea span').forEach(s=>s.onclick=()=>{if(S.busy)return;S.plate.splice(+s.dataset.i,1);renderChange(hint,true)});
- $('clrBtn').onclick=()=>{if(S.busy)return;S.plate=[];renderChange(hint,true)};$('giveBtn').onclick=give}
-function give(){if(S.busy||!S.plate.length)return;const g=sum(S.plate),c=S.paidSum-S.total;
- if(g===c){S.busy=true;beep(true);fly(S.plate,SAFE,PAW,()=>done(0,`${won(c)} 잘 받았어요. 고마워요! 또 올게요!`));return}
- S.tries++;beep(false);mouth(false);
- if(S.tries===1){custSay('어? 거스름돈이 이상해요.',true);renderChange()}
- else if(S.tries===2){custSay('음… 다시 세어 주세요.',true);PEND.push(['guide',`힌트예요. 받은 돈 ${won(S.paidSum)}에서 물건 값 ${won(S.total)}을 빼 보세요.`]);renderChange(`<div class="hint">힌트: 받은 돈 <b>${won(S.paidSum)}</b> − 물건 값 <b>${won(S.total)}</b> = 거스름돈<br>${won(S.total)}에서 시작해서 ${won(S.paidSum)}이 될 때까지 더해 보세요.</div>`)}
- else{S.busy=true;const right=`<div class="hint">이렇게 주면 돼요 (${won(c)})${pile(split(c))}</div>`;
-  if(g>c){const loss=g-c;S.lost+=loss;fly(S.plate,SAFE,PAW,()=>{custSay(`와! 거스름돈을 ${won(loss)}이나 더 받았네요!`);PEND.push(['guide',`거스름돈을 ${won(loss)} 더 줘서 가게 돈이 줄었어요.`]);task('앗, 거스름돈을 더 줬어요',`<div class="hint loss">${won(loss)}을 더 줘서 가게 돈이 줄었어요.</div>${right}<div class="acts"><button class="abtn ok" id="goBtn">알겠어요</button></div>`);$('goBtn').onclick=()=>done(loss,'고마워요! 또 올게요.')})}
-  else{fly(S.plate,SAFE,PAW,()=>{custSay(`어? 거스름돈이 ${won(c-g)} 모자라요.`,true);PEND.push(['guide',`모자란 ${won(c-g)}을 더 줬어요.`]);task('거스름돈이 모자라요',`<div class="hint">모자란 ${won(c-g)}을 더 줬어요.</div>${right}<div class="acts"><button class="abtn ok" id="goBtn">알겠어요</button></div>`);$('goBtn').onclick=()=>done(0,'이제 맞아요. 고마워요! 또 올게요!')})}}}
-function done(loss,msg){S.busy=false;const earn=S.total-loss;S.money+=earn;S.sales+=S.total;updTop();mouth(true);custSay(msg);
- task(loss?'조금 아까웠어요!':'잘했어요!',`<div class="earn">+${won(earn)}</div><div style="font-size:19px">이번 손님에게 ${won(earn)} 벌었어요.</div><div class="acts"><button class="abtn ok" id="nextBtn">${S.n<S.perDay?'다음 손님 받기':'오늘 영업 마치기'}</button></div>`,`${loss?'조금 아까웠어요.':'잘했어요!'} ${won(earn)} 벌었어요.`);pointAt('#nextBtn',5000);
- $('nextBtn').onclick=()=>{custOut();setTimeout(()=>S.n<S.perDay?nextCustomer():settle(),600)}}
-function settle(){const net=S.sales-S.lost;
- task('오늘 영업 끝! 얼마 벌었는지 볼까요?',`<div class="stat"><span>오늘 온 손님</span><span>${S.perDay}명</span></div><div class="stat"><span>판 돈</span><span>${won(S.sales)}</span></div><div class="stat"><span>거스름돈 실수로 나간 돈</span><span class="loss">${S.lost?'−'+won(S.lost):'없어요!'}</span></div><div class="stat"><span>오늘 번 돈</span><span style="color:#E0703A">${won(net)}</span></div><div class="stat"><span>가게 돈</span><span>${won(S.money)}</span></div><div class="acts"><button class="abtn no" id="lvBtn">단계 바꾸기</button><button class="abtn ok" id="dayBtn">다음 날 영업</button></div>`,`오늘 영업 끝! 오늘 번 돈은 ${won(net)}이에요.`);
- $('dayBtn').onclick=startDay;$('lvBtn').onclick=startScreen}
-$('sndBtn').onclick=()=>{S.sound=!S.sound;$('sndBtn').textContent=S.sound?'소리 켜짐':'소리 꺼짐';if(!S.sound&&window.speechSynthesis)speechSynthesis.cancel()};
+function askTotal(){S.phase='total';S.choiceSet=S.choiceSet||choices(S.total);
+ bubble(S.order.map(x=>`<div class="item">${icon(x.name)}${x.qty>1?`<span class="q">×${x.qty}</span>`:''}<div class="pr">${fmt(x.price)}</div></div>`).join(''));
+ $('area').style.width='860px';$('area').innerHTML=S.choiceSet.map(v=>`<button class="choice" data-v="${v}">${fmt(v)}</button>`).join('');
+ $('area').querySelectorAll('.choice').forEach(b=>b.onclick=()=>pickTotal(+b.dataset.v,b));
+ if(!S.tries)talk([['guide','모두 얼마일까요?']])}
+async function pickTotal(v,btn){if(S.busy||S.phase!=='total')return;S.busy=true;
+ if(v===S.total){sfx.ok();btn.classList.add('glow');ownerMood('happy');custMood('happy');await wait(500);S.busy=false;toPay();return}
+ S.tries++;sfx.no();custMood('sad');ownerMood('sad');
+ if(S.tries===1){await talk([['cust','어? 그게 아닌 것 같아요.']]);}
+ else if(S.tries===2){const eq=$('eq');const single=S.order.length===1&&S.order[0].qty===1;eq.style.display=single?'none':'block';eq.innerHTML=S.order.map(x=>x.qty>1?`${fmt(x.price)}×${x.qty}`:fmt(x.price)).join(' + ')+' = <b>?</b>';anim(eq,'flash');
+  const one=S.order.length===1&&S.order[0].qty===1;await talk([['guide',one?`메뉴판에서 ${S.order[0].name} 값을 찾아봐요.`:'같이 더해 봐요. '+S.order.map(x=>x.qty>1?`${won(x.price)} ${x.qty}번`:won(x.price)).join(' 더하기 ')+'.']]);}
+ else{const right=[...$('area').children].find(b=>+b.dataset.v===S.total);right&&right.classList.add('glow');await talk([['guide',`정답은 ${won(S.total)}이에요.`]]);await wait(600);S.busy=false;toPay();return}
+ custMood('normal');S.busy=false}
+async function toPay(){S.phase='pay';S.tries=0;$('eq').style.display='none';$('area').innerHTML='';
+ S.paid=genPaid(S.total);S.paidSum=sum(S.paid);
+ bubble(`<div class="big">${fmt(S.paidSum)}</div>`);
+ $('paw').innerHTML=S.paid.map(v=>moneyEl(v)).join('');$('paw').classList.add('pulse');
+ await talk([['cust',`${won(S.total)}이요? 여기 ${won(S.paidSum)} 낼게요.`],['guide','손님 돈을 눌러서 받아요.']]);
+ if(S.phase!=='pay')return;
+ $('paw').querySelectorAll('.money').forEach(m=>m.onclick=receive);
+ pointAt($('paw'),3500)}
+async function receive(){if(S.busy||S.phase!=='pay')return;S.busy=true;hideHand();const p=$('paw');p.classList.remove('pulse');const from=stageXY(p);const html=p.innerHTML;p.innerHTML='';sfx.coin();
+ await fly(`<div class="sm" style="display:flex">${html}</div>`,from,[1080,380]);sfx.ching();sparkle(1135,400,10);
+ S.busy=false;askChange()}
+function plateHTML(){return S.plate.map((v,i)=>moneyEl(v).replace('class="money','data-i="'+i+'" class="money')).join('')}
+async function askChange(){S.phase='change';const L=LV[S.level];
+ bubble(`<svg width="90" height="90" viewBox="0 0 60 60"><circle cx="24" cy="34" r="16" fill="#E3E6EA" stroke="#A9AEB5" stroke-width="3"/><circle cx="36" cy="26" r="16" fill="#EDEFF2" stroke="#8F96A0" stroke-width="3"/></svg><div class="big">?</div>`);
+ const eq=$('eq');eq.style.display='block';eq.innerHTML=`${fmt(S.paidSum)} − ${fmt(S.total)} = <b>?</b>`;
+ $('plate').style.display='flex';$('plate').innerHTML=plateHTML();
+ $('area').style.width='640px';$('area').innerHTML=L.safe.map(d=>moneyEl(d)).join('');
+ $('give').style.display='flex';$('give').disabled=!S.plate.length;
+ $('area').querySelectorAll('.money').forEach(m=>m.onclick=()=>addMoney(+m.dataset.v,m));
+ $('give').onclick=give;
+ if(!S.tries){await talk([['cust','거스름돈 주세요!'],['guide','금고에서 돈을 눌러 접시에 담고, 주기를 눌러요.']]);pointAt($('area').firstElementChild,4000)}}
+async function addMoney(v,el){if(S.busy||S.phase!=='change')return;sfx.coin();const from=stageXY(el);const html=moneyEl(v);S.plate.push(v);
+ fly(`<div class="sm">${html}</div>`,from,[460,400]).then(()=>{$('plate').innerHTML=plateHTML();bindPlate()});$('give').disabled=false;pointAt($('give'),6000)}
+function bindPlate(){$('plate').querySelectorAll('.money').forEach(m=>m.onclick=()=>{if(S.busy)return;S.plate.splice(+m.dataset.i,1);sfx.pop();$('plate').innerHTML=plateHTML();bindPlate();$('give').disabled=!S.plate.length})}
+async function give(){if(S.busy||S.phase!=='change'||!S.plate.length)return;S.busy=true;hideHand();const g=sum(S.plate),c=S.paidSum-S.total;
+ const sendPlate=async()=>{const html=$('plate').innerHTML;$('plate').innerHTML='';await fly(`<div class="sm" style="display:flex">${html}</div>`,[440,400],[300,430]);sfx.coin()};
+ if(g===c){await sendPlate();await done(0);return}
+ S.tries++;sfx.no();custMood('sad');ownerMood('sad');
+ if(S.tries===1){await talk([['cust','어? 거스름돈이 이상해요.']]);}
+ else if(S.tries===2){anim($('eq'),'flash');await talk([['guide',`${won(S.total)}에서 시작해서, ${won(S.paidSum)}이 될 때까지 더해 보세요.`]]);}
+ else{await sendPlate();
+  if(g>c){const loss=g-c;S.lost+=loss;await talk([['cust',`와! ${won(loss)}이나 더 받았네요!`],['guide',`거스름돈을 ${won(loss)} 더 줘서, 가게 돈이 줄었어요. 거스름돈은 ${won(c)}이에요.`]]);await done(loss)}
+  else{await talk([['cust',`어? ${won(c-g)} 모자라요.`],['guide',`거스름돈은 ${won(c)}이에요. 모자란 돈을 더 줬어요.`]]);await done(0)}
+  return}
+ custMood('normal');ownerMood('normal');S.busy=false}
+async function done(loss){S.phase='done';const earn=S.total-loss;S.money+=earn;S.sales+=S.total;
+ $('eq').style.display='none';$('plate').style.display='none';$('area').innerHTML='';$('give').style.display='none';
+ custMood('happy');ownerMood('happy');sfx.ching();sparkle(640,300,22);showDelta(earn);updHud();
+ bubble(`<svg width="100" height="90" viewBox="0 0 24 22"><path d="M12 21s-9-5.5-9-12a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.5-9 12-9 12z" fill="#FF7AA2"/></svg>`);
+ await talk([['cust','고마워요! 또 올게요!'],['guide',loss?`${won(earn)} 벌었어요.`:`잘했어요! ${won(earn)} 벌었어요.`]]);
+ hideBubble();const c=$('cust');c.classList.remove('walkin');anim(c,'walkout');$('custBody')&&$('custBody').classList.add('bob');await wait(1000);c.innerHTML='';
+ S.busy=false;S.n<S.perDay?nextCustomer():settle()}
+async function settle(){S.phase='settle';updHud();const net=S.sales-S.lost;const c=$('cover');c.classList.remove('hide');
+ c.innerHTML=`<div class="logo">영업 끝!</div><div class="sumrow"><div class="k">${Object.keys(CUST).map(k=>`<svg width="90" height="90" viewBox="40 -20 300 300">${custSVG(k).replace(/<svg[^>]*>|<\/svg>/g,'')}</svg>`).join('')}<span>×${S.perDay}</span></div></div><div class="sumrow"><div class="k"><span class="ci" style="width:60px;height:60px;border-radius:50%;background:#F6C945;border:5px solid #D9A92A;display:inline-block"></span>+${fmt(S.sales)}</div>${S.lost?`<div class="k loss">−${fmt(S.lost)}</div>`:''}</div><div style="display:flex;gap:30px;align-items:center"><button class="ibtn" id="lvBtn" style="width:90px;height:90px" aria-label="단계 바꾸기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button><button class="play" id="dayBtn" aria-label="다음 날"><svg viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z" fill="#fff"/></svg></button></div>`;
+ $('dayBtn').onclick=()=>{c.classList.add('hide');startDay()};$('lvBtn').onclick=startScreen;
+ await talk([['guide',`오늘 영업 끝! 손님 ${S.perDay}명에게 ${won(S.sales)}을 팔았어요.${S.lost?` 거스름돈 실수로 ${won(S.lost)}이 나갔어요.`:''} 오늘 번 돈은 ${won(net)}이에요.`]]);pointAt($('dayBtn'),3000)}
+$('rpBtn').onclick=()=>{unlock();talk(LAST)};
+$('sndBtn').onclick=()=>{S.sound=!S.sound;$('sndBtn').style.opacity=S.sound?1:.4;if(!S.sound&&window.speechSynthesis)speechSynthesis.cancel()};
 startScreen();
 </script>
 </body>
