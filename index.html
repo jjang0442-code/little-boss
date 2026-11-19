@@ -85,8 +85,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:#2B1D16;font-family:'J
 #paw .money:first-child{margin-left:0}
 #paw.pulse{animation:pulse .7s infinite alternate}
 @keyframes pulse{to{transform:scale(1.08) rotate(-3deg)}}
-#plate{left:390px;top:392px;width:300px;height:84px;border-radius:50%;background:#FFF8EE;border:4px dashed #E8C9A6;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 20px}
-#plate .money{margin-left:-80px}#plate .money:first-child{margin-left:0}
+#plate{left:384px;top:392px;width:320px;height:84px;gap:18px;border-radius:50%;background:#FFF8EE;border:4px dashed #E8C9A6;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 20px}
+#plate .pg{position:relative;display:inline-flex;cursor:pointer}#plate .pg b{position:absolute;right:-12px;top:-14px;background:#F28C5B;color:#fff;border-radius:999px;font-weight:400;font-size:22px;padding:0 9px;line-height:30px}
 #eq{left:420px;top:506px;background:#fff;border-radius:22px;padding:2px 22px;font-size:40px;z-index:5;box-shadow:0 4px 0 #E8D2B8;white-space:nowrap}
 #eq b{color:#F28C5B;font-weight:400}
 #eq.flash{animation:flash .5s 3}
@@ -100,7 +100,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#2B1D16;font-family:'J
 #hand{width:110px;height:110px;z-index:80;pointer-events:none;display:none;animation:tap 1s infinite}
 @keyframes tap{50%{transform:translate(-10px,-16px)}}
 /* 덮개 화면 */
-.cover{position:absolute;inset:0;background:rgba(255,239,214,.96);z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px}
+.cover{position:absolute;inset:0;background:#FFEFD6;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px}
 .cover.hide{display:none}
 .lv{display:flex;gap:24px}
 .lv button{width:210px;height:210px;border-radius:40px;border:6px solid #EAD5BC;background:#fff;font:inherit;font-size:60px;color:#5B3A2A;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
@@ -120,7 +120,7 @@ body.port #floor{top:760px;height:520px}body.port #floorLine{top:760px}
 body.port #window{left:250px;top:100px;width:200px;height:140px}
 body.port #board{left:470px;top:84px;width:236px;height:200px;padding:10px 12px}
 body.port #board .row{height:44px}body.port #board .row svg{width:34px;height:34px}body.port #board .row span{font-size:18px!important}body.port #board .row .p{font-size:22px}
-body.port #cust{left:-30px;top:300px}
+body.port #cust{left:-30px;top:390px}
 body.port #owner{left:450px;top:330px}
 body.port #tag{left:510px;top:306px}
 body.port #counterTop{left:300px;top:600px;width:420px}
@@ -129,7 +129,7 @@ body.port #ctrl{display:block}
 body.port #reg{left:36px;top:1120px}
 body.port #bubble{left:24px;top:104px;max-width:380px}
 body.port #bubble:after{left:110px}
-body.port #paw{left:220px;top:520px}
+body.port #paw{left:210px;top:600px}
 body.port #plate{left:330px;top:650px;width:300px;height:80px;z-index:4}
 body.port #eq{left:40px;top:796px;font-size:38px}
 body.port #area{left:20px;top:880px;width:680px!important;height:220px;flex-wrap:wrap;gap:16px}
@@ -284,7 +284,7 @@ async function toPay(){S.phase='pay';S.tries=0;$('eq').style.display='none';$('a
 async function receive(){if(S.busy||S.phase!=='pay')return;S.busy=true;hideHand();const p=$('paw');p.classList.remove('pulse');const from=stageXY(p);const html=p.innerHTML;p.innerHTML='';sfx.coin();
  const rc=center($('reg'));await fly(`<div class="sm" style="display:flex">${html}</div>`,from,[rc[0]-50,rc[1]-30]);sfx.ching();sparkle(rc[0],rc[1],10);
  S.busy=false;askChange()}
-function plateHTML(){return S.plate.map((v,i)=>moneyEl(v).replace('class="money','data-i="'+i+'" class="money')).join('')}
+function plateHTML(){const g={};S.plate.forEach(v=>g[v]=(g[v]||0)+1);return Object.keys(g).map(Number).sort((a,b)=>b-a).map(v=>`<span class="pg" data-v="${v}">${moneyEl(v)}${g[v]>1?`<b>×${g[v]}</b>`:''}</span>`).join('')}
 async function askChange(){S.phase='change';const L=LV[S.level];
  bubble(`<svg width="90" height="90" viewBox="0 0 60 60"><circle cx="24" cy="34" r="16" fill="#E3E6EA" stroke="#A9AEB5" stroke-width="3"/><circle cx="36" cy="26" r="16" fill="#EDEFF2" stroke="#8F96A0" stroke-width="3"/></svg><div class="big">?</div>`);
  const eq=$('eq');eq.style.display='block';eq.innerHTML=`${fmt(S.paidSum)} − ${fmt(S.total)} = <b>?</b>`;
@@ -296,7 +296,7 @@ async function askChange(){S.phase='change';const L=LV[S.level];
  if(!S.tries){await talk([['cust','거스름돈 주세요!'],['guide','금고에서 돈을 눌러 접시에 담고, 주기를 눌러요.']]);pointAt($('area').firstElementChild,4000)}}
 async function addMoney(v,el){if(S.busy||S.phase!=='change')return;sfx.coin();const from=stageXY(el);const html=moneyEl(v);S.plate.push(v);
  fly(`<div class="sm">${html}</div>`,from,(()=>{const p=stageXY($('plate'));return[p[0]+30,p[1]+8]})()).then(()=>{$('plate').innerHTML=plateHTML();bindPlate()});$('give').disabled=false;pointAt($('give'),6000)}
-function bindPlate(){$('plate').querySelectorAll('.money').forEach(m=>m.onclick=()=>{if(S.busy)return;S.plate.splice(+m.dataset.i,1);sfx.pop();$('plate').innerHTML=plateHTML();bindPlate();$('give').disabled=!S.plate.length})}
+function bindPlate(){$('plate').querySelectorAll('.pg').forEach(m=>m.onclick=()=>{if(S.busy)return;S.plate.splice(S.plate.indexOf(+m.dataset.v),1);sfx.pop();$('plate').innerHTML=plateHTML();bindPlate();$('give').disabled=!S.plate.length})}
 async function give(){if(S.busy||S.phase!=='change'||!S.plate.length)return;S.busy=true;hideHand();const g=sum(S.plate),c=S.paidSum-S.total;
  const sendPlate=async()=>{const html=$('plate').innerHTML;$('plate').innerHTML='';const p0=stageXY($('plate')),cu=stageXY($('cust'));await fly(`<div class="sm" style="display:flex">${html}</div>`,[p0[0]+20,p0[1]+4],[cu[0]+250,cu[1]+190]);sfx.coin()};
  if(g===c){await sendPlate();await done(0);return}
@@ -312,11 +312,11 @@ async function done(loss){S.phase='done';const earn=S.total-loss;S.money+=earn;S
  $('eq').style.display='none';$('plate').style.display='none';$('area').innerHTML='';$('give').style.display='none';
  custMood('happy');ownerMood('happy');sfx.ching();(()=>{const o=center($('owner'));sparkle(o[0],o[1]-40,22)})();showDelta(earn);updHud();
  bubble(`<svg width="100" height="90" viewBox="0 0 24 22"><path d="M12 21s-9-5.5-9-12a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.5-9 12-9 12z" fill="#FF7AA2"/></svg>`);
- await talk([['cust','고마워요! 또 올게요!'],['guide',loss?`${won(earn)} 벌었어요.`:`잘했어요! ${won(earn)} 벌었어요.`]]);
+ await talk([['cust','고마워요! 또 올게요!'],['guide',earn<0?`이번 손님에게는 ${won(-earn)} 손해를 봤어요. 다음엔 천천히 세어 봐요.`:loss?`${won(earn)} 벌었어요.`:`잘했어요! ${won(earn)} 벌었어요.`]]);
  hideBubble();const c=$('cust');c.classList.remove('walkin');anim(c,'walkout');$('custBody')&&$('custBody').classList.add('bob');await wait(1000);c.innerHTML='';
  S.busy=false;S.n<S.perDay?nextCustomer():settle()}
 async function settle(){S.phase='settle';updHud();const net=S.sales-S.lost;const c=$('cover');c.classList.remove('hide');
- c.innerHTML=`<div class="logo">영업 끝!</div><div class="sumrow"><div class="k">${Object.keys(CUST).map(k=>`<svg width="90" height="90" viewBox="40 -20 300 300">${custSVG(k).replace(/<svg[^>]*>|<\/svg>/g,'')}</svg>`).join('')}<span>×${S.perDay}</span></div></div><div class="sumrow"><div class="k"><span class="ci" style="width:60px;height:60px;border-radius:50%;background:#F6C945;border:5px solid #D9A92A;display:inline-block"></span>+${fmt(S.sales)}</div>${S.lost?`<div class="k loss">−${fmt(S.lost)}</div>`:''}</div><div style="display:flex;gap:30px;align-items:center"><button class="ibtn" id="lvBtn" style="width:90px;height:90px" aria-label="단계 바꾸기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button><button class="play" id="dayBtn" aria-label="다음 날"><svg viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z" fill="#fff"/></svg></button></div>`;
+ c.innerHTML=`<div class="logo">영업 끝!</div><div class="sumrow"><div class="k">${Object.keys(CUST).map(k=>`<svg width="90" height="90" viewBox="40 -20 300 300">${custSVG(k).replace(/<svg[^>]*>|<\/svg>/g,'')}</svg>`).join('')}<span>×${S.perDay}</span></div></div><div class="sumrow"><div class="k" style="font-size:84px;${net<0?'color:#D4483B':''}"><span class="ci" style="width:70px;height:70px;border-radius:50%;background:#F6C945;border:6px solid #D9A92A;display:inline-block"></span>${net<0?'−':'+'}${fmt(Math.abs(net))}</div></div>${S.lost?`<div style="font-size:30px;color:#9A7A66">판 돈 ${fmt(S.sales)} · 거스름돈 실수 <span class="loss">−${fmt(S.lost)}</span></div>`:''}<div style="display:flex;gap:30px;align-items:center"><button class="ibtn" id="lvBtn" style="width:90px;height:90px" aria-label="단계 바꾸기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button><button class="play" id="dayBtn" aria-label="다음 날"><svg viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z" fill="#fff"/></svg></button></div>`;
  $('dayBtn').onclick=()=>{c.classList.add('hide');startDay()};$('lvBtn').onclick=startScreen;
  await talk([['guide',`오늘 영업 끝! 손님 ${S.perDay}명에게 ${won(S.sales)}을 팔았어요.${S.lost?` 거스름돈 실수로 ${won(S.lost)}이 나갔어요.`:''} 오늘 번 돈은 ${won(net)}이에요.`]]);pointAt($('dayBtn'),3000)}
 $('rpBtn').onclick=()=>{unlock();talk(LAST)};
