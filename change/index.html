@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>꼬마사장 - 거스름돈</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+html,body{margin:0;height:100%;overflow:hidden;position:fixed;inset:0;background:#2B1D16;font-family:'Jua',sans-serif;color:#5B3A2A;touch-action:none;overscroll-behavior:none}
+#stage{position:fixed;left:0;top:0;width:1280px;height:720px;transform-origin:0 0;overflow:hidden;background:#F8E4C8}
+.abs{position:absolute}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes jump{40%{transform:translateY(-50px)}100%{transform:translateY(0)}}
+@keyframes shake{20%{transform:rotate(-5deg)}40%{transform:rotate(4deg)}60%{transform:rotate(-3deg)}80%{transform:rotate(2deg)}}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(255,209,102,.0)}50%{box-shadow:0 0 0 10px rgba(255,209,102,.9)}}
+#bear{transform-origin:200px 590px}
+#bear.jump{animation:jump .5s ease-out 2}
+#bear.shake{animation:shake .5s}
+/* 말풍선 */
+#bubble{left:400px;top:150px;background:#fff;border-radius:40px;padding:16px 30px;box-shadow:0 6px 0 #EBCDA8;font-size:54px;color:#E0703A;min-width:120px;text-align:center;transform-origin:20% 100%;transition:transform .2s}
+#bubble.hide{transform:scale(0)}
+#bubble.pop{animation:pop .3s}
+#bubble small{display:block;font-size:26px;color:#9A7A66}
+/* 손바닥 */
+#pawZone{left:320px;top:360px;width:300px;height:150px}
+#pawItems{left:352px;top:398px;width:240px;height:96px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0}
+#pawItems .m{margin:-6px -14px;cursor:pointer;animation:pop .25s}
+#pawZone.hot svg ellipse:first-child{fill:#D8A574}
+/* 계산대 */
+#reg{left:700px;top:60px;width:540px;height:250px;background:#7C9BB5;border-radius:30px;box-shadow:0 8px 0 #5E7E99;padding:24px;display:flex;flex-direction:column;gap:16px}
+#disp{background:#DDEBF5;border-radius:18px;height:120px;display:flex;align-items:center;justify-content:center;gap:18px;font-size:60px;color:#2F5E8C}
+#disp .op{color:#E0703A}
+#disp.flash{animation:glow .7s 3}
+#regRow{display:flex;gap:12px;align-items:center;font-size:22px;color:#fff}
+/* 서랍 */
+#drawer{left:640px;top:400px;width:640px;height:320px;background:#5E7E99;border-radius:30px 0 0 0;padding:22px;display:flex;flex-direction:column;gap:16px}
+.row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.row4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.slot{background:#4B6880;border-radius:16px;height:112px;display:flex;align-items:center;justify-content:center;touch-action:none;cursor:grab}
+.slot.c{border-radius:50px;height:118px}
+.slot.glow{animation:glow .9s infinite}
+/* 돈 */
+.m{display:inline-flex;align-items:center;justify-content:center;border:4px solid;flex:none}
+.bill{width:150px;height:76px;border-radius:10px;font-size:26px}
+.coin{border-radius:50%}
+.v10000{background:#BFE3B8;border-color:#7DBF72;color:#2D6A2A;font-size:24px}
+.v5000{background:#F5C7A6;border-color:#DE9264;color:#8A3B12}
+.v1000{background:#BFD6F2;border-color:#7FA6D6;color:#1F4E85}
+.v500{width:84px;height:84px;background:#EDEFF2;border-color:#8F96A0;color:#444;font-size:26px}
+.v100{width:72px;height:72px;background:#E3E6EA;border-color:#A9AEB5;color:#555;font-size:22px}
+.v50{width:64px;height:64px;background:#E3E6EA;border-color:#A9AEB5;color:#555;font-size:20px}
+.v10{width:60px;height:60px;background:#E2A866;border-color:#B57B3E;color:#6E4318;font-size:20px}
+.slot .bill{box-shadow:0 6px 0 rgba(0,0,0,.12),0 12px 0 rgba(0,0,0,.08)}
+.slot .coin{box-shadow:0 5px 0 rgba(0,0,0,.12),0 10px 0 rgba(0,0,0,.08)}
+#pawItems .bill{width:110px;height:56px;font-size:20px}
+#pawItems .v500{width:62px;height:62px;font-size:19px}#pawItems .v100{width:54px;height:54px;font-size:17px}#pawItems .v50{width:48px;height:48px;font-size:15px}#pawItems .v10{width:46px;height:46px;font-size:15px}
+.drag{position:absolute;z-index:60;pointer-events:none;transform:translate(-50%,-50%) scale(1.08);filter:drop-shadow(0 10px 10px rgba(91,58,42,.3))}
+.fly{position:absolute;z-index:55;pointer-events:none;transition:transform .45s cubic-bezier(.4,0,.3,1)}
+.spark{position:absolute;width:20px;height:20px;border-radius:50%;z-index:70;pointer-events:none;transition:transform .9s ease-out,opacity .9s}
+/* 상단 */
+#hud{left:20px;top:16px;display:flex;gap:12px}
+.chip{background:#fff;border-radius:999px;height:54px;padding:0 20px 0 10px;display:flex;align-items:center;gap:10px;font-size:28px;box-shadow:0 4px 0 #EBCDA8}
+.ci{width:38px;height:38px;border-radius:50%;background:#F6C945;border:3px solid #D9A92A}
+#dots{display:flex;gap:8px;padding:0 16px}#dots i{width:16px;height:16px;border-radius:50%;background:#EAD5BC}#dots i.on{background:#F28C5B}#dots i.ok{background:#7CC9A6}
+.ib{width:54px;height:54px;border-radius:50%;border:0;background:#fff;box-shadow:0 4px 0 #EBCDA8;display:flex;align-items:center;justify-content:center;color:#5B3A2A;cursor:pointer}
+#hand{width:96px;height:96px;z-index:80;pointer-events:none;display:none;animation:bob 1s infinite}
+/* 덮개 */
+.cover{position:absolute;inset:0;background:#F8E4C8;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px}
+.cover.hide{display:none}
+.logo{font-size:84px;color:#E0703A}
+.lv{display:flex;gap:24px}
+.lv button{width:200px;height:200px;border-radius:40px;border:6px solid #EAD5BC;background:#fff;font:inherit;font-size:60px;color:#5B3A2A;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.lv button small{font-size:28px;color:#B08A6E}.lv button.on{border-color:#F28C5B;background:#FFF1E6}
+.play{width:180px;height:180px;border-radius:50%;border:0;background:#F28C5B;box-shadow:0 10px 0 #C9683C;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#rotate{position:fixed;inset:0;background:#F8E4C8;z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;font-size:28px;font-family:'Jua',sans-serif;color:#5B3A2A}
+#rotate svg{width:130px;height:130px;animation:rot 2s ease-in-out infinite}
+@keyframes rot{0%,20%{transform:rotate(0)}50%,80%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
+@media (orientation:portrait){#rotate{display:flex}}
+</style>
+</head>
+<body>
+<div id="rotate"><svg viewBox="0 0 100 100"><rect x="30" y="10" width="40" height="80" rx="8" fill="#fff" stroke="#5B3A2A" stroke-width="5"/><circle cx="50" cy="80" r="4" fill="#5B3A2A"/></svg><div>옆으로 돌려 주세요</div></div>
+<div id="stage">
+  <svg class="abs" style="left:0;top:0" width="1280" height="720" viewBox="0 0 1280 720" aria-hidden="true">
+    <circle cx="560" cy="80" r="90" fill="#FCEFD9"/><circle cx="900" cy="40" r="60" fill="#FCEFD9"/><circle cx="120" cy="60" r="70" fill="#FCEFD9"/>
+    <rect x="0" y="560" width="1280" height="160" fill="#F2CFA0"/>
+  </svg>
+  <svg id="bear" style="position:absolute;left:34px;top:150px" width="420" height="590" viewBox="0 0 300 420" aria-hidden="true"><g>
+
+
+<ellipse cx="135" cy="404" rx="32" ry="15" fill="#946540"/><ellipse cx="200" cy="404" rx="32" ry="15" fill="#946540"/>
+<ellipse cx="166" cy="300" rx="82" ry="98" fill="#B07A4F"/><ellipse cx="166" cy="318" rx="50" ry="64" fill="#E9C9A2"/>
+<ellipse cx="108" cy="296" rx="18" ry="30" fill="#9C6B44" transform="rotate(20 108 296)"/>
+<circle cx="104" cy="92" r="30" fill="#B07A4F"/><circle cx="228" cy="92" r="30" fill="#B07A4F"/>
+<circle cx="104" cy="92" r="15" fill="#D9A97C"/><circle cx="228" cy="92" r="15" fill="#D9A97C"/>
+<circle cx="166" cy="152" r="80" fill="#B07A4F"/>
+<ellipse cx="166" cy="182" rx="38" ry="28" fill="#E9C9A2"/><ellipse cx="166" cy="166" rx="12" ry="9" fill="#3A2A22"/>
+<g style="transform-origin: 166px 144px; animation: blink 3.4s infinite"><circle cx="136" cy="144" r="10" fill="#3A2A22"/><circle cx="196" cy="144" r="10" fill="#3A2A22"/><circle cx="139" cy="140" r="3" fill="#fff"/><circle cx="199" cy="140" r="3" fill="#fff"/></g>
+<ellipse cx="116" cy="178" rx="14" ry="9" fill="#FFA9A0" opacity=".75"/><ellipse cx="216" cy="178" rx="14" ry="9" fill="#FFA9A0" opacity=".75"/>
+<path d="M154 190q12 12 24 0" fill="none" stroke="#3A2A22" stroke-width="4" stroke-linecap="round"/>
+
+</g></svg>
+  <svg class="abs" style=" left: 290px; top: 380px" width="200" height="200" viewBox="0 0 200 200" aria-hidden="true"><path d="M30 170Q90 120 150 80" fill="none" stroke="#B07A4F" stroke-width="52" stroke-linecap="round"/></svg>
+  <div class="abs" style="left:0;top:640px;width:640px;height:80px;background:#F28C5B"></div>
+  <div class="abs" style="left:0;top:626px;width:650px;height:26px;background:#FFB98A;border-radius:0 13px 13px 0"></div>
+  <div class="abs" id="pawZone"><svg width="300" height="150" viewBox="0 0 300 150" aria-hidden="true">
+      <ellipse cx="150" cy="90" rx="140" ry="56" fill="#C99567"/>
+      <ellipse cx="62" cy="52" rx="20" ry="16" fill="#C99567"/><ellipse cx="110" cy="40" rx="20" ry="16" fill="#C99567"/><ellipse cx="160" cy="38" rx="20" ry="16" fill="#C99567"/><ellipse cx="210" cy="44" rx="20" ry="16" fill="#C99567"/>
+      <ellipse cx="150" cy="96" rx="104" ry="36" fill="#E9C9A2"/>
+    </svg></div>
+  <div class="abs" id="pawItems"></div>
+  <div class="abs hide" id="bubble"></div>
+  <div class="abs" id="reg"><div id="disp"></div><div id="regRow"></div></div>
+  <div class="abs" id="drawer">
+    <div class="row3"><div class="slot" data-v="1000"></div><div class="slot" data-v="5000"></div><div class="slot" data-v="10000"></div></div>
+    <div class="row4"><div class="slot c" data-v="500"></div><div class="slot c" data-v="100"></div><div class="slot c" data-v="50"></div><div class="slot c" data-v="10"></div></div>
+  </div>
+  <div class="abs" id="hud"><div class="chip"><span class="ci"></span><span id="money">0</span></div><div class="chip" id="dots"></div></div>
+  <div class="abs" style="left:620px;top:16px;display:flex;gap:12px">
+    <button class="ib" id="rpBtn" aria-label="다시 듣기"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg></button>
+  </div>
+  <svg class="abs" id="hand" viewBox="0 0 64 64"><path d="M22 6c4 0 6 3 6 6v18l3-1c3-1 6 1 6 1l4-1c3-1 6 1 6 2l3 0c3 0 5 2 5 5v10c0 9-7 16-16 16h-6c-6 0-10-3-13-8L9 37c-2-3 0-6 3-6 2 0 4 1 5 3l1 2V12c0-3 2-6 4-6z" fill="#FFE0C2" stroke="#5B3A2A" stroke-width="3" stroke-linejoin="round"/></svg>
+  <div class="cover" id="cover"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const fmt=v=>v.toLocaleString('ko-KR');
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const sum=a=>a.reduce((x,y)=>x+y,0);
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const ROUNDS=5;
+const S={level:2,round:0,price:0,paid:0,change:0,paw:[],busy:false,over:0,help:false,earned:0,idleT:null,started:false};
+/* 화면 맞추기 */
+function fit(){const vv=window.visualViewport;const vw=vv?vv.width:innerWidth,vh=vv?vv.height:innerHeight,ox=vv?vv.offsetLeft:0,oy=vv?vv.offsetTop:0;const sc=Math.min(vw/1280,vh/720);const st=$('stage');st.style.left=(ox+(vw-1280*sc)/2)+'px';st.style.top=(oy+(vh-720*sc)/2)+'px';st.style.transform=`scale(${sc})`;S.sc=sc}
+addEventListener('resize',fit);if(window.visualViewport){visualViewport.addEventListener('resize',fit);visualViewport.addEventListener('scroll',fit)}addEventListener('orientationchange',()=>setTimeout(fit,300));fit();
+function toStage(cx,cy){const r=$('stage').getBoundingClientRect(),k=r.width/1280;return[(cx-r.left)/k,(cy-r.top)/k]}
+function rectStage(el){const r=el.getBoundingClientRect(),[x,y]=toStage(r.left,r.top),k=$('stage').getBoundingClientRect().width/1280;return{x,y,w:r.width/k,h:r.height/k}}
+/* 소리 */
+let AC=null;
+function tone(fs,type,len,vol=.16){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime;fs.forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;o.type=type;g.gain.setValueAtTime(vol,t+i*len);g.gain.exponentialRampToValueAtTime(.001,t+i*len+.25);o.connect(g);g.connect(AC.destination);o.start(t+i*len);o.stop(t+i*len+.3)})}catch(e){}}
+const sfx={coin:()=>tone([1568,2093],'triangle',.06),bill:()=>tone([520,700],'sine',.05,.1),ok:()=>tone([1046,1318,1568,2093],'triangle',.08),back:()=>tone([500,380],'sine',.1),pop:()=>tone([700],'sine',.08,.1)};
+let VOICE=null,LAST=[];
+function pickVoice(){try{const vs=speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang));const nat=vs.filter(v=>/Natural|Online|Neural|Premium|Enhanced/i.test(v.name));VOICE=nat[0]||vs.find(v=>/Google|Yuna|Sora/i.test(v.name))||vs[0]||null}catch(e){}}
+if(window.speechSynthesis){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+function say(txt,o={}){LAST=[txt,o];return new Promise(res=>{if(!window.speechSynthesis){setTimeout(res,700);return}try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt.replace(/,/g,''));u.lang='ko-KR';if(VOICE)u.voice=VOICE;u.rate=o.rate||1.02;u.pitch=o.pitch||1.35;let d=false;const fin=()=>{if(!d){d=true;res()}};u.onend=fin;u.onerror=fin;setTimeout(fin,txt.length*230+1500);speechSynthesis.speak(u)}catch(e){res()}})}
+function unlock(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();if(window.speechSynthesis){pickVoice();const u=new SpeechSynthesisUtterance(' ');u.volume=0;u.lang='ko-KR';speechSynthesis.speak(u)}}catch(e){}}
+/* 숫자 한글 읽기 */
+function kor(n){if(n===0)return '영';const d=['','일','이','삼','사','오','육','칠','팔','구'];let s='';const man=Math.floor(n/10000);if(man)s+=(man===1?'':kor(man))+'만';n%=10000;[[1000,'천'],[100,'백'],[10,'십']].forEach(([u,w])=>{const q=Math.floor(n/u);if(q){s+=(q===1?'':d[q])+w}n%=u});if(n)s+=d[n];return s}
+/* 말풍선 */
+function bubble(main,sub){const b=$('bubble');b.innerHTML=(sub?`<small>${sub}</small>`:'')+main;b.classList.remove('hide');b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop')}
+function bearAnim(c){const b=$('bear');b.classList.remove('jump','shake');void b.getBoundingClientRect();b.classList.add(c);setTimeout(()=>b.classList.remove(c),1100)}
+function mouth(m){const p=document.querySelector('#bear path[stroke="#3A2A22"]');if(p)p.setAttribute('d',m==='sad'?'M154 196q12-10 24 0':m==='wow'?'M156 192q10 14 20 0q-10 6-20 0':'M154 190q12 12 24 0')}
+/* 돈 그리기 */
+function mEl(v){const bill=v>=1000;return `<div class="m ${bill?'bill':'coin'} v${v}" data-v="${v}">${fmt(v)}</div>`}
+document.querySelectorAll('.slot').forEach(s=>s.innerHTML=mEl(+s.dataset.v));
+function drawPaw(){$('pawItems').innerHTML=S.paw.map((v,i)=>mEl(v).replace('class="m','data-i="'+i+'" class="m')).join('');$('pawItems').querySelectorAll('.m').forEach(m=>m.onclick=()=>takeBack(+m.dataset.i))}
+/* 손가락 */
+function hideHand(){$('hand').style.display='none'}
+function pointAt(el){if(!el)return;const r=rectStage(el);const h=$('hand');h.style.left=(r.x+r.w/2-20)+'px';h.style.top=(r.y+r.h/2-6)+'px';h.style.display='block'}
+/* 반짝이 */
+function sparkle(x,y,n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=['#FFD166','#F28C5B','#7CC9A6','#6CA6D9'][i%4];$('stage').appendChild(s);const a=Math.random()*6.28,r=70+Math.random()*120;requestAnimationFrame(()=>{s.style.transform=`translate(${Math.cos(a)*r}px,${Math.sin(a)*r}px) scale(.3)`;s.style.opacity='0'});setTimeout(()=>s.remove(),950)}}
+function fly(html,from,to){return new Promise(res=>{const d=document.createElement('div');d.className='fly';d.innerHTML=html;d.style.left=from[0]+'px';d.style.top=from[1]+'px';$('stage').appendChild(d);void d.getBoundingClientRect();requestAnimationFrame(()=>d.style.transform=`translate(${to[0]-from[0]}px,${to[1]-from[1]}px)`);setTimeout(()=>{d.remove();res()},470)})}
+/* 대기 도움 */
+function resetIdle(){clearTimeout(S.idleT);S.idleT=setTimeout(idleHelp,9000)}
+async function idleHelp(){if(S.busy||S.phase!=='give')return;const t=sum(S.paw);
+ if(!S.paw.length){bubble('?');await say(`거스름돈은 ${kor(S.change)}원이에요. ${kor(S.paid)}에서 ${kor(S.price)}을 빼면 돼요.`,{pitch:1.0,rate:.95});$('disp').classList.remove('flash');void $('disp').offsetWidth;$('disp').classList.add('flash');showHelp()}
+ else{bubble(fmt(t)+'…','조금 더 주세요');mouth('sad');await say(`음, 아직 ${kor(S.change-t)}원 모자라요.`);mouth('happy')}
+ resetIdle()}
+function greedy(v){const o=[];[10000,5000,1000,500,100,50,10].forEach(d=>{while(v>=d){o.push(d);v-=d}});return o}
+function showHelp(){document.querySelectorAll('.slot').forEach(s=>s.classList.remove('glow'));const need=greedy(S.change-sum(S.paw));if(!need.length)return;const sl=document.querySelector(`.slot[data-v="${need[0]}"]`);sl.classList.add('glow');pointAt(sl)}
+/* 끌기 */
+let drag=null,Q=Promise.resolve();
+document.querySelectorAll('.slot').forEach(s=>s.addEventListener('pointerdown',e=>{if(S.phase!=='give'||drag)return;e.preventDefault();hideHand();const v=+s.dataset.v;const [x,y]=toStage(e.clientX,e.clientY);const g=document.createElement('div');g.className='drag';g.innerHTML=mEl(v);g.style.left=x+'px';g.style.top=y+'px';$('stage').appendChild(g);drag={v,g,sx:x,sy:y,moved:false,slot:s};try{s.setPointerCapture(e.pointerId)}catch(_){}sfx.pop()}));
+document.addEventListener('pointermove',e=>{if(!drag)return;const [x,y]=toStage(e.clientX,e.clientY);drag.g.style.left=x+'px';drag.g.style.top=y+'px';if(Math.hypot(x-drag.sx,y-drag.sy)>12)drag.moved=true;const z=rectStage($('pawZone'));$('pawZone').classList.toggle('hot',x>z.x-40&&x<z.x+z.w+40&&y>z.y-50&&y<z.y+z.h+40)});
+document.addEventListener('pointerup',async e=>{if(!drag)return;const d=drag;drag=null;$('pawZone').classList.remove('hot');const [x,y]=toStage(e.clientX,e.clientY);const z=rectStage($('pawZone'));const onPaw=x>z.x-40&&x<z.x+z.w+40&&y>z.y-50&&y<z.y+z.h+40;
+ if(onPaw||!d.moved){d.g.remove();Q=Q.then(async()=>{if(S.phase!=='give')return;if(!d.moved){const r=rectStage($('pawItems'));await fly(mEl(d.v),[x-40,y-30],[r.x+r.w/2-40,r.y+20]);}await give(d.v)})}
+ else{const r=rectStage(d.slot);await fly(mEl(d.v),[x-40,y-30],[r.x+r.w/2-40,r.y+r.h/2-30]);d.g.remove()}});
+/* 핵심: 손바닥에 올리기 */
+async function give(v){if(S.phase!=='give')return;S.busy=true;document.querySelectorAll('.slot').forEach(s=>s.classList.remove('glow'));resetIdle();S.paw.push(v);drawPaw();v>=1000?sfx.bill():sfx.coin();const t=sum(S.paw);
+ if(t===S.change){S.phase='done';clearTimeout(S.idleT);bubble(kor(t)+'!','딱 맞아요');mouth('wow');await say(`${kor(t)}! 딱 맞아요!`);await done();return}
+ if(t>S.change){S.over++;mouth('sad');bearAnim('shake');bubble(fmt(t),'어? 너무 많아요');await say(`${kor(t)}? 어, 너무 많아요. 이건 돌려 드릴게요.`);const back=S.paw.pop();const pr=rectStage($('pawItems'));const sl=document.querySelector(`.slot[data-v="${back}"]`);const sr=rectStage(sl);drawPaw();sfx.back();await fly(mEl(back),[pr.x+pr.w/2-40,pr.y+10],[sr.x+sr.w/2-40,sr.y+sr.h/2-30]);mouth('happy');if(S.over>=2){await say('같이 해 볼까요? 반짝이는 돈을 주세요.',{pitch:1.0,rate:.95});showHelp()}S.busy=false;return}
+ bubble(kor(t)+'…');say(kor(t));S.busy=false;if(S.over>=2)showHelp()}
+async function takeBack(i){if(S.busy||S.phase!=='give')return;const v=S.paw.splice(i,1)[0];drawPaw();sfx.back();const sl=document.querySelector(`.slot[data-v="${v}"]`);const sr=rectStage(sl),pr=rectStage($('pawItems'));await fly(mEl(v),[pr.x+pr.w/2-40,pr.y+10],[sr.x+sr.w/2-40,sr.y+sr.h/2-30]);const t=sum(S.paw);bubble(t?kor(t)+'…':'?');resetIdle()}
+async function done(){S.earned+=S.price;bearAnim('jump');sfx.ok();const pr=rectStage($('pawItems'));sparkle(pr.x+pr.w/2,pr.y+pr.h/2,22);$('pawItems').querySelectorAll('.m').forEach(m=>m.style.transition='transform .5s, opacity .5s');await wait(300);$('pawItems').querySelectorAll('.m').forEach(m=>{m.style.transform='translate(-160px,-60px) scale(.3)';m.style.opacity='0'});
+ $('money').textContent=fmt(S.earned);updDots(true);await say('고마워요! 또 올게요!');await wait(400);S.busy=false;S.round<ROUNDS?nextRound():finish()}
+function updDots(ok){$('dots').innerHTML=Array.from({length:ROUNDS},(_,i)=>`<i class="${i<S.round-(ok?0:1)?'ok':i===S.round-1?'on':''}"></i>`).join('')}
+/* 판 만들기 */
+function makeRound(){const lv=S.level;let price,paid;
+ if(lv===1){price=rnd(1,8)*100;paid=1000}
+ else if(lv===2){price=rnd(2,9)*500-[0,0,200,300][rnd(0,3)];paid=price<1000?1000:price<5000?5000:10000}
+ else{price=rnd(12,98)*100;paid=price<5000&&Math.random()<.4?5000:10000}
+ if(paid===price)paid+=lv===1?0:1000;return{price,paid}}
+async function nextRound(){S.round++;const r=makeRound();S.price=r.price;S.paid=r.paid;S.change=S.paid-S.price;S.paw=[];S.over=0;drawPaw();updDots(false);hideHand();mouth('happy');
+ $('disp').innerHTML=`<span>${fmt(S.paid)}</span><span class="op">−</span><span>${fmt(S.price)}</span>`;
+ $('regRow').innerHTML=`<div class="m bill v${S.paid>=1000?S.paid:1000}" style="width:112px;height:56px;font-size:22px">${fmt(S.paid)}</div><span>받은 돈</span>`;
+ S.phase='intro';bubble(fmt(S.paid),'여기요!');bearAnim('jump');
+ await say(`여기 ${kor(S.paid)}원이요. 거스름돈 주세요!`);
+ S.phase='give';bubble('?');resetIdle();if(S.round===1){pointAt(document.querySelector('.slot'));}}
+async function finish(){S.phase='end';const c=$('cover');c.classList.remove('hide');c.innerHTML=`<div class="logo">참 잘했어요!</div><div style="display:flex;align-items:center;gap:16px;font-size:72px"><span class="ci" style="width:66px;height:66px;display:inline-block"></span>+${fmt(S.earned)}</div><button class="play" id="again" aria-label="다시"><svg width="90" height="90" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z" fill="#fff"/></svg></button>`;$('again').onclick=()=>{unlock();start()};await say(`손님 ${ROUNDS}명에게 거스름돈을 잘 줬어요!`,{pitch:1.0})}
+function start(){S.round=0;S.earned=0;$('money').textContent='0';$('cover').classList.add('hide');nextRound()}
+function startScreen(){const c=$('cover');c.classList.remove('hide');c.innerHTML=`<div class="logo">꼬마사장</div><div class="lv">${[[1,'6~7'],[2,'8'],[3,'9~10']].map(([l,a])=>`<button data-l="${l}" class="${l===S.level?'on':''}">${a}<small>살</small></button>`).join('')}</div><button class="play" id="go" aria-label="시작"><svg width="90" height="90" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z" fill="#fff"/></svg></button>`;
+ c.querySelectorAll('.lv button').forEach(b=>b.onclick=()=>{unlock();S.level=+b.dataset.l;c.querySelectorAll('.lv button').forEach(x=>x.classList.toggle('on',x===b));sfx.pop()});$('go').onclick=()=>{unlock();start()}}
+$('rpBtn').onclick=()=>{unlock();if(LAST[0])say(LAST[0],LAST[1])};
+updDots(false);startScreen();
+</script>
+</body>
+</html>
