@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#F28C5B">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>꼬마사장 - 거스름돈</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap">
 <style>
@@ -83,7 +87,7 @@ html,body{margin:0;height:100%;overflow:hidden;position:fixed;inset:0;background
 </style>
 </head>
 <body>
-<div id="rotate"><svg viewBox="0 0 100 100"><rect x="30" y="10" width="40" height="80" rx="8" fill="#fff" stroke="#5B3A2A" stroke-width="5"/><circle cx="50" cy="80" r="4" fill="#5B3A2A"/></svg><div>옆으로 돌려 주세요</div></div>
+<div id="rotate" onclick="goLandscape()"><svg viewBox="0 0 100 100"><rect x="30" y="10" width="40" height="80" rx="8" fill="#fff" stroke="#5B3A2A" stroke-width="5"/><circle cx="50" cy="80" r="4" fill="#5B3A2A"/></svg><div>옆으로 돌려 주세요</div></div>
 <div id="stage">
   <svg class="abs" style="left:0;top:0" width="1280" height="720" viewBox="0 0 1280 720" aria-hidden="true">
     <circle cx="560" cy="80" r="90" fill="#FCEFD9"/><circle cx="900" cy="40" r="60" fill="#FCEFD9"/><circle cx="120" cy="60" r="70" fill="#FCEFD9"/>
@@ -147,6 +151,7 @@ let VOICE=null,LAST=[];
 function pickVoice(){try{const vs=speechSynthesis.getVoices().filter(v=>/^ko/i.test(v.lang));const nat=vs.filter(v=>/Natural|Online|Neural|Premium|Enhanced/i.test(v.name));VOICE=nat[0]||vs.find(v=>/Google|Yuna|Sora/i.test(v.name))||vs[0]||null}catch(e){}}
 if(window.speechSynthesis){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
 function say(txt,o={}){LAST=[txt,o];return new Promise(res=>{if(!window.speechSynthesis){setTimeout(res,700);return}try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt.replace(/,/g,''));u.lang='ko-KR';if(VOICE)u.voice=VOICE;u.rate=o.rate||1.02;u.pitch=o.pitch||1.35;let d=false;const fin=()=>{if(!d){d=true;res()}};u.onend=fin;u.onerror=fin;setTimeout(fin,txt.length*230+1500);speechSynthesis.speak(u)}catch(e){res()}})}
+async function goLandscape(){try{const el=document.documentElement;if(!document.fullscreenElement&&el.requestFullscreen)await el.requestFullscreen({navigationUI:'hide'});}catch(e){}try{if(screen.orientation&&screen.orientation.lock)await screen.orientation.lock('landscape')}catch(e){}setTimeout(fit,300)}
 function unlock(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();if(window.speechSynthesis){pickVoice();const u=new SpeechSynthesisUtterance(' ');u.volume=0;u.lang='ko-KR';speechSynthesis.speak(u)}}catch(e){}}
 /* 숫자 한글 읽기 */
 function kor(n){if(n===0)return '영';const d=['','일','이','삼','사','오','육','칠','팔','구'];let s='';const man=Math.floor(n/10000);if(man)s+=(man===1?'':kor(man))+'만';n%=10000;[[1000,'천'],[100,'백'],[10,'십']].forEach(([u,w])=>{const q=Math.floor(n/u);if(q){s+=(q===1?'':d[q])+w}n%=u});if(n)s+=d[n];return s}
@@ -200,10 +205,10 @@ async function nextRound(){S.round++;const r=makeRound();S.price=r.price;S.paid=
  S.phase='intro';bubble(fmt(S.paid),'여기요!');bearAnim('jump');
  await say(`여기 ${kor(S.paid)}원이요. 거스름돈 주세요!`);
  S.phase='give';bubble('?');resetIdle();if(S.round===1){pointAt(document.querySelector('.slot'));}}
-async function finish(){S.phase='end';const c=$('cover');c.classList.remove('hide');c.innerHTML=`<div class="logo">참 잘했어요!</div><div style="display:flex;align-items:center;gap:16px;font-size:72px"><span class="ci" style="width:66px;height:66px;display:inline-block"></span>+${fmt(S.earned)}</div><button class="play" id="again" aria-label="다시"><svg width="90" height="90" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z" fill="#fff"/></svg></button>`;$('again').onclick=()=>{unlock();start()};await say(`손님 ${ROUNDS}명에게 거스름돈을 잘 줬어요!`,{pitch:1.0})}
+async function finish(){S.phase='end';const c=$('cover');c.classList.remove('hide');c.innerHTML=`<div class="logo">참 잘했어요!</div><div style="display:flex;align-items:center;gap:16px;font-size:72px"><span class="ci" style="width:66px;height:66px;display:inline-block"></span>+${fmt(S.earned)}</div><button class="play" id="again" aria-label="다시"><svg width="90" height="90" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z" fill="#fff"/></svg></button>`;$('again').onclick=()=>{unlock();goLandscape();start()};await say(`손님 ${ROUNDS}명에게 거스름돈을 잘 줬어요!`,{pitch:1.0})}
 function start(){S.round=0;S.earned=0;$('money').textContent='0';$('cover').classList.add('hide');nextRound()}
 function startScreen(){const c=$('cover');c.classList.remove('hide');c.innerHTML=`<div class="logo">꼬마사장</div><div class="lv">${[[1,'6~7'],[2,'8'],[3,'9~10']].map(([l,a])=>`<button data-l="${l}" class="${l===S.level?'on':''}">${a}<small>살</small></button>`).join('')}</div><button class="play" id="go" aria-label="시작"><svg width="90" height="90" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z" fill="#fff"/></svg></button>`;
- c.querySelectorAll('.lv button').forEach(b=>b.onclick=()=>{unlock();S.level=+b.dataset.l;c.querySelectorAll('.lv button').forEach(x=>x.classList.toggle('on',x===b));sfx.pop()});$('go').onclick=()=>{unlock();start()}}
+ c.querySelectorAll('.lv button').forEach(b=>b.onclick=()=>{unlock();S.level=+b.dataset.l;c.querySelectorAll('.lv button').forEach(x=>x.classList.toggle('on',x===b));sfx.pop()});$('go').onclick=()=>{unlock();goLandscape();start()}}
 $('rpBtn').onclick=()=>{unlock();if(LAST[0])say(LAST[0],LAST[1])};
 updDots(false);startScreen();
 </script>
